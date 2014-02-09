@@ -11,10 +11,14 @@ namespace CodeArtEng.Diagnostics.Controls
     /// </summary>
     public class DiagnosticsTextBox : TextBox
     {
+        private static readonly object LockObject = new object();
+        string MessageBuffer;
+
         private ContextMenuStrip contextMenuStrip1;
         private IContainer components;
         private ToolStripMenuItem toolStripEnabled;
         private ToolStripMenuItem toolStripClear;
+        private Timer refreshTimer;
         private TraceLogger Tracer;
 
         /// <summary>
@@ -26,9 +30,11 @@ namespace CodeArtEng.Diagnostics.Controls
 
             //Default control property
             Multiline = true;
-            ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            
             ReadOnly = true;
             Width = Height = 100;
+            MessageBuffer = "";
 
             //Setup listener
             Tracer = new TraceLogger(Tracer_OnWriteMessage, Tracer_OnFlush);
@@ -72,7 +78,14 @@ namespace CodeArtEng.Diagnostics.Controls
 
         private void Tracer_OnWriteMessage(string message)
         {
-            if (ListenerEnabled) HandleWriteEvent(message);
+            //if (ListenerEnabled) HandleWriteEvent(message);
+            if (ListenerEnabled)
+            {
+                lock (LockObject)
+                {
+                    MessageBuffer += message;
+                }
+            }
         }
         private void Tracer_OnFlush()
         {
@@ -89,8 +102,10 @@ namespace CodeArtEng.Diagnostics.Controls
                 return;
             }
 
-            this.AppendText(message);
+            //this.AppendText(message);
+            this.Text += message;
         }
+
 
         private void InitializeComponent()
         {
@@ -98,6 +113,7 @@ namespace CodeArtEng.Diagnostics.Controls
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripEnabled = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripClear = new System.Windows.Forms.ToolStripMenuItem();
+            this.refreshTimer = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -123,9 +139,16 @@ namespace CodeArtEng.Diagnostics.Controls
             this.toolStripClear.Size = new System.Drawing.Size(116, 22);
             this.toolStripClear.Text = "Clear";
             // 
+            // refreshTimer
+            // 
+            this.refreshTimer.Enabled = true;
+            this.refreshTimer.Interval = 10;
+            this.refreshTimer.Tick += new System.EventHandler(this.refreshTimer_Tick);
+            // 
             // DiagnosticsTextBox
             // 
             this.ContextMenuStrip = this.contextMenuStrip1;
+            this.WordWrap = false;
             this.VisibleChanged += new System.EventHandler(this.DiagnosticsTextBox_VisibleChanged);
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -150,6 +173,18 @@ namespace CodeArtEng.Diagnostics.Controls
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
         {
             toolStripEnabled.Checked = ListenerEnabled;
+        }
+
+        private void refreshTimer_Tick(object sender, EventArgs e)
+        {
+            lock (LockObject)
+            {
+                //Transfer from Message Buffer to Diagnostics Text Box without locking main thread.
+                if (MessageBuffer.Length == 0) return;
+                this.AppendText(MessageBuffer);
+                MessageBuffer = "";
+            }
+
         }
     }
 }

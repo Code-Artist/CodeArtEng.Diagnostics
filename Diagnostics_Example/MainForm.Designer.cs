@@ -33,15 +33,16 @@
             this.chkAutoFlushEnabled = new System.Windows.Forms.CheckBox();
             this.BtWrite = new System.Windows.Forms.Button();
             this.BtFlush = new System.Windows.Forms.Button();
-            this.diagnosticsTextBox1 = new CodeArtEng.Diagnostics.Controls.DiagnosticsTextBox();
             this.btThreadWrite = new System.Windows.Forms.Button();
             this.WorkerThread = new System.ComponentModel.BackgroundWorker();
+            this.diagnosticsTextBox1 = new CodeArtEng.Diagnostics.Controls.DiagnosticsTextBox();
             this.SuspendLayout();
             // 
             // chkListenerEnabled
             // 
+            this.chkListenerEnabled.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkListenerEnabled.AutoSize = true;
-            this.chkListenerEnabled.Location = new System.Drawing.Point(202, 14);
+            this.chkListenerEnabled.Location = new System.Drawing.Point(392, 14);
             this.chkListenerEnabled.Name = "chkListenerEnabled";
             this.chkListenerEnabled.Size = new System.Drawing.Size(85, 17);
             this.chkListenerEnabled.TabIndex = 1;
@@ -51,8 +52,9 @@
             // 
             // chkAutoFlushEnabled
             // 
+            this.chkAutoFlushEnabled.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkAutoFlushEnabled.AutoSize = true;
-            this.chkAutoFlushEnabled.Location = new System.Drawing.Point(202, 37);
+            this.chkAutoFlushEnabled.Location = new System.Drawing.Point(392, 37);
             this.chkAutoFlushEnabled.Name = "chkAutoFlushEnabled";
             this.chkAutoFlushEnabled.Size = new System.Drawing.Size(73, 17);
             this.chkAutoFlushEnabled.TabIndex = 2;
@@ -62,7 +64,8 @@
             // 
             // BtWrite
             // 
-            this.BtWrite.Location = new System.Drawing.Point(200, 60);
+            this.BtWrite.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.BtWrite.Location = new System.Drawing.Point(390, 60);
             this.BtWrite.Name = "BtWrite";
             this.BtWrite.Size = new System.Drawing.Size(75, 23);
             this.BtWrite.TabIndex = 3;
@@ -72,7 +75,8 @@
             // 
             // BtFlush
             // 
-            this.BtFlush.Location = new System.Drawing.Point(200, 89);
+            this.BtFlush.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.BtFlush.Location = new System.Drawing.Point(390, 89);
             this.BtFlush.Name = "BtFlush";
             this.BtFlush.Size = new System.Drawing.Size(75, 23);
             this.BtFlush.TabIndex = 4;
@@ -80,21 +84,10 @@
             this.BtFlush.UseVisualStyleBackColor = true;
             this.BtFlush.Click += new System.EventHandler(this.BtFlush_Click);
             // 
-            // diagnosticsTextBox1
-            // 
-            this.diagnosticsTextBox1.FlushEnabled = false;
-            this.diagnosticsTextBox1.ListenerEnabled = false;
-            this.diagnosticsTextBox1.Location = new System.Drawing.Point(12, 12);
-            this.diagnosticsTextBox1.Multiline = true;
-            this.diagnosticsTextBox1.Name = "diagnosticsTextBox1";
-            this.diagnosticsTextBox1.ReadOnly = true;
-            this.diagnosticsTextBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.diagnosticsTextBox1.Size = new System.Drawing.Size(182, 242);
-            this.diagnosticsTextBox1.TabIndex = 5;
-            // 
             // btThreadWrite
             // 
-            this.btThreadWrite.Location = new System.Drawing.Point(202, 131);
+            this.btThreadWrite.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btThreadWrite.Location = new System.Drawing.Point(392, 131);
             this.btThreadWrite.Name = "btThreadWrite";
             this.btThreadWrite.Size = new System.Drawing.Size(75, 23);
             this.btThreadWrite.TabIndex = 6;
@@ -106,13 +99,29 @@
             // 
             this.WorkerThread.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WorkerThread_DoWork);
             // 
+            // diagnosticsTextBox1
+            // 
+            this.diagnosticsTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.diagnosticsTextBox1.FlushEnabled = true;
+            this.diagnosticsTextBox1.ListenerEnabled = false;
+            this.diagnosticsTextBox1.Location = new System.Drawing.Point(12, 12);
+            this.diagnosticsTextBox1.Multiline = true;
+            this.diagnosticsTextBox1.Name = "diagnosticsTextBox1";
+            this.diagnosticsTextBox1.ReadOnly = true;
+            this.diagnosticsTextBox1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.diagnosticsTextBox1.Size = new System.Drawing.Size(372, 242);
+            this.diagnosticsTextBox1.TabIndex = 7;
+            this.diagnosticsTextBox1.WordWrap = false;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(302, 266);
-            this.Controls.Add(this.btThreadWrite);
+            this.ClientSize = new System.Drawing.Size(489, 266);
             this.Controls.Add(this.diagnosticsTextBox1);
+            this.Controls.Add(this.btThreadWrite);
             this.Controls.Add(this.BtFlush);
             this.Controls.Add(this.BtWrite);
             this.Controls.Add(this.chkAutoFlushEnabled);
@@ -130,9 +139,9 @@
         private System.Windows.Forms.CheckBox chkAutoFlushEnabled;
         private System.Windows.Forms.Button BtWrite;
         private System.Windows.Forms.Button BtFlush;
-        private CodeArtEng.Diagnostics.Controls.DiagnosticsTextBox diagnosticsTextBox1;
         private System.Windows.Forms.Button btThreadWrite;
         private System.ComponentModel.BackgroundWorker WorkerThread;
+        private CodeArtEng.Diagnostics.Controls.DiagnosticsTextBox diagnosticsTextBox1;
     }
 }
 

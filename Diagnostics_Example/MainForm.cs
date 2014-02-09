@@ -37,7 +37,6 @@ namespace Diagnostics_Example
 
         private void BtWrite_Click(object sender, EventArgs e)
         {
-            diagnosticsTextBox1.SuspendLayout();
             for(int x = 0; x < 20; x++)
                 Trace.Write(x.ToString() + " ");
 
@@ -46,23 +45,29 @@ namespace Diagnostics_Example
             
             for(int x = 0; x < 20; x++)
                 Trace.WriteLine("Line " + x.ToString());
-            diagnosticsTextBox1.ResumeLayout();
         }
 
         private void WorkerThread_DoWork(object sender, DoWorkEventArgs e)
         {
             Trace.WriteLine("Write message from worker thread...");
-            for (int x = 0; x < 10; x++)
+            for (int x = 0; x < 200; x++)
             {
-                Debug.WriteLine("Thread: Debug Message " + x.ToString());
+                //Debug.WriteLine("Thread: Debug Message " + x.ToString());
                 Trace.WriteLine("Thread: Trace Message " + x.ToString());
-                System.Threading.Thread.Sleep(1000);
+                System.Threading.Thread.Sleep(10);
             }
         }
 
         private void btThreadWrite_Click(object sender, EventArgs e)
         {
             WorkerThread.RunWorkerAsync();
+            for (int x = 0; x < 100; x++)
+            {
+                //Debug.WriteLine("Main: Debug Message " + x.ToString());
+                Trace.WriteLine("Main: Trace Message " + x.ToString());
+                System.Threading.Thread.Sleep(20);
+                Application.DoEvents();
+            }
         }
     }
 }

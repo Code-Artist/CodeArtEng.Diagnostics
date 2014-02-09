@@ -48,7 +48,7 @@ namespace CodeArtEng.Diagnostics
         /// Receive message from Trace source followed by a line terminator.
         /// </summary>
         /// <param name="message">Message received.</param>
-        public override void WriteLine(string message) { OnWrite(message + "\n"); }
+        public override void WriteLine(string message) { OnWrite(message + "\r\n"); }
         /// <summary>
         /// Flushes trace buffer.
         /// </summary>
