@@ -15,6 +15,7 @@ namespace Diagnostics_Example
         public MainForm()
         {
             InitializeComponent();
+            diagnosticsTextBox1.OutputFile = "Output.log";
 
             chkListenerEnabled.Checked = diagnosticsTextBox1.ListenerEnabled;
             chkAutoFlushEnabled.Checked = diagnosticsTextBox1.FlushEnabled;

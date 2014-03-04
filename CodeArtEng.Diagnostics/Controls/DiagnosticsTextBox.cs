@@ -19,6 +19,7 @@ namespace CodeArtEng.Diagnostics.Controls
         private ToolStripMenuItem toolStripEnabled;
         private ToolStripMenuItem toolStripClear;
         private Timer refreshTimer;
+        private ToolStripMenuItem toolStripSaveToFile;
         private TraceLogger Tracer;
 
         /// <summary>
@@ -31,7 +32,7 @@ namespace CodeArtEng.Diagnostics.Controls
             //Default control property
             Multiline = true;
             ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            
+
             ReadOnly = true;
             Width = Height = 100;
             MessageBuffer = "";
@@ -84,6 +85,7 @@ namespace CodeArtEng.Diagnostics.Controls
                 lock (LockObject)
                 {
                     MessageBuffer += message;
+                    if (!string.IsNullOrEmpty(_OutputFile)) System.IO.File.AppendAllText(_OutputFile, message);
                 }
             }
         }
@@ -106,7 +108,6 @@ namespace CodeArtEng.Diagnostics.Controls
             this.Text += message;
         }
 
-
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
@@ -114,6 +115,7 @@ namespace CodeArtEng.Diagnostics.Controls
             this.toolStripEnabled = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripClear = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshTimer = new System.Windows.Forms.Timer(this.components);
+            this.toolStripSaveToFile = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -121,22 +123,23 @@ namespace CodeArtEng.Diagnostics.Controls
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripEnabled,
-            this.toolStripClear});
+            this.toolStripClear,
+            this.toolStripSaveToFile});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(117, 48);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(143, 70);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             this.contextMenuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.contextMenuStrip1_ItemClicked);
             // 
             // toolStripEnabled
             // 
             this.toolStripEnabled.Name = "toolStripEnabled";
-            this.toolStripEnabled.Size = new System.Drawing.Size(116, 22);
+            this.toolStripEnabled.Size = new System.Drawing.Size(142, 22);
             this.toolStripEnabled.Text = "Enabled";
             // 
             // toolStripClear
             // 
             this.toolStripClear.Name = "toolStripClear";
-            this.toolStripClear.Size = new System.Drawing.Size(116, 22);
+            this.toolStripClear.Size = new System.Drawing.Size(142, 22);
             this.toolStripClear.Text = "Clear";
             // 
             // refreshTimer
@@ -144,6 +147,12 @@ namespace CodeArtEng.Diagnostics.Controls
             this.refreshTimer.Enabled = true;
             this.refreshTimer.Interval = 10;
             this.refreshTimer.Tick += new System.EventHandler(this.refreshTimer_Tick);
+            // 
+            // toolStripSaveToFile
+            // 
+            this.toolStripSaveToFile.Name = "toolStripSaveToFile";
+            this.toolStripSaveToFile.Size = new System.Drawing.Size(142, 22);
+            this.toolStripSaveToFile.Text = "Save to File...";
             // 
             // DiagnosticsTextBox
             // 
@@ -169,6 +178,18 @@ namespace CodeArtEng.Diagnostics.Controls
             {
                 this.Clear();
             }
+            else if (e.ClickedItem == toolStripSaveToFile)
+            {
+                contextMenuStrip1.Hide(); //Hide context menu.
+                using (SaveFileDialog dlg = new SaveFileDialog())
+                {
+                    if (dlg.ShowDialog() == DialogResult.OK)
+                    {
+                        System.IO.File.WriteAllText(dlg.FileName, this.Text);
+                    }
+                }
+
+            }
         }
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
         {
@@ -185,6 +206,13 @@ namespace CodeArtEng.Diagnostics.Controls
                 MessageBuffer = "";
             }
 
+        }
+
+        private string _OutputFile;
+        public string OutputFile
+        {
+            get { return _OutputFile; }
+            set { lock (LockObject) { _OutputFile = value; } }
         }
     }
 }
