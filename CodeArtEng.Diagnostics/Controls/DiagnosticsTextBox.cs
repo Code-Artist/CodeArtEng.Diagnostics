@@ -77,6 +77,15 @@ namespace CodeArtEng.Diagnostics.Controls
         [Description("Indicate whether control should response to Flush() command from trace source.")]
         public bool FlushEnabled { get; set; }
 
+        /// <summary>
+        /// Enable / Disable printing time stamp in front of each message.
+        /// </summary>
+        [Category("Trace Listener")]
+        [DisplayName("ShowTimeStamp")]
+        [Description("Append time stamp in front of each log message.")]
+        [DefaultValue(false)]
+        public bool ShowTimeStamp { get { return Tracer.ShowTimeStamp; } set { Tracer.ShowTimeStamp = value; } }
+
         private void Tracer_OnWriteMessage(string message)
         {
             //if (ListenerEnabled) HandleWriteEvent(message);

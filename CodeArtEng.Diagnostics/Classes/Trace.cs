@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
+using System.Globalization;
 
 [assembly: CLSCompliant(true)]
 namespace CodeArtEng.Diagnostics
@@ -25,6 +26,9 @@ namespace CodeArtEng.Diagnostics
         TraceLoggerFlush OnFlush;
         private bool _EnableTracer;
 
+        public const string NewLineDelimiter = "\r\n";
+        public bool IsNewLine;
+
         private void DummyWrite(string message) { }
         private void DummyFlush() { }
 
@@ -36,19 +40,35 @@ namespace CodeArtEng.Diagnostics
         public TraceLogger(TraceLoggerWrite writeCallback, TraceLoggerFlush flushCallback)
         {
             Enabled = true;
+            ShowTimeStamp = false;
             OnWrite = writeCallback ?? DummyWrite;
             OnFlush = flushCallback ?? DummyFlush;
+            IsNewLine = true;
+
+            DateTimeFormatInfo timeFormat = CultureInfo.CurrentCulture.DateTimeFormat;
+            TimeStampFormat = timeFormat.ShortDatePattern + " " + timeFormat.LongTimePattern;
+            TimeStampFormat = TimeStampFormat.Replace("ss", "ss.fff"); //Include miliseconds
         }
         /// <summary>
         /// Received message from Trace source.
-        /// </summary>
+        /// </summary>CRLF
         /// <param name="message">Message received.</param>
-        public override void Write(string message) { OnWrite(message); }
+        public override void Write(string message)
+        {
+            if (ShowTimeStamp && IsNewLine) message = DateTime.Now.ToString() + ": " + message;
+            OnWrite(message);
+            IsNewLine = false;
+        }
         /// <summary>
         /// Receive message from Trace source followed by a line terminator.
         /// </summary>
         /// <param name="message">Message received.</param>
-        public override void WriteLine(string message) { OnWrite(message + "\r\n"); }
+        public override void WriteLine(string message)
+        {
+            if (ShowTimeStamp && IsNewLine) message = "[" + DateTime.Now.ToString(TimeStampFormat) + "] " + message;
+            OnWrite(message + NewLineDelimiter);
+            IsNewLine = true;
+        }
         /// <summary>
         /// Flushes trace buffer.
         /// </summary>
@@ -77,6 +97,17 @@ namespace CodeArtEng.Diagnostics
                     Trace.Listeners.Remove(this);
             }
         }
+
+        /// <summary>
+        /// Enable / Disable time stamp in log.
+        /// </summary>
+        public bool ShowTimeStamp { get; set; }
+
+        /// <summary>
+        /// Define date time display format. Use default format if undefined.
+        /// Time stamp is append in front of message when <see cref="ShowTimeStamp"/> is enabled.
+        /// </summary>
+        public string TimeStampFormat { get; set; }
 
     }
 }

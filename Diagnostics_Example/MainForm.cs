@@ -12,6 +12,8 @@ namespace Diagnostics_Example
 {
     public partial class MainForm : Form
     {
+        private CodeArtEng.Diagnostics.ProcessExecutor procExecutor;
+
         public MainForm()
         {
             InitializeComponent();
@@ -19,6 +21,9 @@ namespace Diagnostics_Example
 
             chkListenerEnabled.Checked = diagnosticsTextBox1.ListenerEnabled;
             chkAutoFlushEnabled.Checked = diagnosticsTextBox1.FlushEnabled;
+
+            procExecutor = new CodeArtEng.Diagnostics.ProcessExecutor();
+            propertyGrid1.SelectedObject = procExecutor;
         }
 
         private void chkListenerEnabled_CheckedChanged(object sender, EventArgs e)
@@ -69,6 +74,23 @@ namespace Diagnostics_Example
                 System.Threading.Thread.Sleep(20);
                 Application.DoEvents();
             }
+        }
+
+        private void chkShowTimeStamp_CheckedChanged(object sender, EventArgs e)
+        {
+            diagnosticsTextBox1.ShowTimeStamp = chkShowTimeStamp.Checked;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            CodeArtEng.Diagnostics.ProcessResult result = procExecutor.Execute(false);
+            if(result != null)
+            {
+                if (result.ErrorDetected) Trace.WriteLine("ERROR Detected.");
+                foreach (string line in result.Output)
+                    Trace.WriteLine(line);
+            }
+
         }
     }
 }
