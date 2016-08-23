@@ -28,7 +28,9 @@ namespace CodeArtEng.Diagnostics
         /// This flag is set if any stderr message is received.
         /// </summary>
         public bool ErrorDetected { get; set; }
-
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public ProcessResult() { Output = new string[] { }; }
     }
 
@@ -188,7 +190,8 @@ namespace CodeArtEng.Diagnostics
                     processInfo.Password = ssPwd;
                     processInfo.Domain = DomainName;
                 }
-                Trace.WriteLine(Name + ": Executing: " + processInfo.FileName + " " + processInfo.Arguments);
+                Trace.WriteLine(Name + ": Executing: " + processInfo.FileName + " " + processInfo.Arguments + 
+                    (string.IsNullOrEmpty(processInfo.UserName) ?  "" : " as " + processInfo.Domain + "\\" +  processInfo.UserName));
                 if (ProcessHandler != null) DisposeProcessHandler();
                 ProcessHandler = Process.Start(processInfo);
                 if (!ShowConsoleWindow)
@@ -210,7 +213,7 @@ namespace CodeArtEng.Diagnostics
             }
             catch (Exception ex)
             {
-                result.Output = new string[] { ex.ToString() };
+                result.Output = new string[] { ex.Message.ToString() };
                 result.ErrorDetected = true;
                 result.ExitCode = -999;
                 return result;

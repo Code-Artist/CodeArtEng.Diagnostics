@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("CodeArtEng.Diagnostics")]
+[assembly: AssemblyTitle("CodeArtEng.Diagnostics.Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Personal")]
-[assembly: AssemblyProduct("CodeArtEng.Diagnostics")]
-[assembly: AssemblyCopyright("Copyright © CodeArtEng 2011")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("CodeArtEng.Diagnostics.Tests")]
+[assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("3c7ba038-3e89-4ba3-9343-7685286ac17f")]
+[assembly: Guid("2f6c3625-704e-4e6e-bf12-e88fee340477")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.3.3.0")]
-[assembly: AssemblyFileVersion("2.3.3.0")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]

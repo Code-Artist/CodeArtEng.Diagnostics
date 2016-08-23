@@ -18,22 +18,28 @@ namespace Diagnostics_Example
         {
             InitializeComponent();
             diagnosticsTextBox1.OutputFile = "Output.log";
+            diagnosticsTextBox1.WriteToFile = true;
 
             chkListenerEnabled.Checked = diagnosticsTextBox1.ListenerEnabled;
             chkAutoFlushEnabled.Checked = diagnosticsTextBox1.FlushEnabled;
 
             procExecutor = new CodeArtEng.Diagnostics.ProcessExecutor();
+            procExecutor.Application = "..\\..\\TestA.bat";
+            procExecutor.TraceLogEnabled = true;
             propertyGrid1.SelectedObject = procExecutor;
+            propertyGrid2.SelectedObject = diagnosticsTextBox1;
         }
 
         private void chkListenerEnabled_CheckedChanged(object sender, EventArgs e)
         {
             diagnosticsTextBox1.ListenerEnabled = chkListenerEnabled.Checked;
+            propertyGrid2.Refresh();
         }
 
         private void chkAutoFlushEnabled_CheckedChanged(object sender, EventArgs e)
         {
             diagnosticsTextBox1.FlushEnabled = chkAutoFlushEnabled.Checked;
+            propertyGrid2.Refresh();
         }
 
         private void BtFlush_Click(object sender, EventArgs e)
@@ -79,6 +85,7 @@ namespace Diagnostics_Example
         private void chkShowTimeStamp_CheckedChanged(object sender, EventArgs e)
         {
             diagnosticsTextBox1.ShowTimeStamp = chkShowTimeStamp.Checked;
+            propertyGrid2.Refresh();
         }
 
         private void button1_Click(object sender, EventArgs e)

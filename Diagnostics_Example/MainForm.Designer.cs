@@ -37,15 +37,18 @@
             this.WorkerThread = new System.ComponentModel.BackgroundWorker();
             this.chkShowTimeStamp = new System.Windows.Forms.CheckBox();
             this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
-            this.diagnosticsTextBox1 = new CodeArtEng.Diagnostics.Controls.DiagnosticsTextBox();
             this.button1 = new System.Windows.Forms.Button();
+            this.propertyGrid2 = new System.Windows.Forms.PropertyGrid();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.diagnosticsTextBox1 = new CodeArtEng.Diagnostics.Controls.DiagnosticsTextBox();
             this.SuspendLayout();
             // 
             // chkListenerEnabled
             // 
             this.chkListenerEnabled.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkListenerEnabled.AutoSize = true;
-            this.chkListenerEnabled.Location = new System.Drawing.Point(702, 14);
+            this.chkListenerEnabled.Location = new System.Drawing.Point(916, 14);
             this.chkListenerEnabled.Name = "chkListenerEnabled";
             this.chkListenerEnabled.Size = new System.Drawing.Size(85, 17);
             this.chkListenerEnabled.TabIndex = 1;
@@ -57,7 +60,7 @@
             // 
             this.chkAutoFlushEnabled.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkAutoFlushEnabled.AutoSize = true;
-            this.chkAutoFlushEnabled.Location = new System.Drawing.Point(702, 37);
+            this.chkAutoFlushEnabled.Location = new System.Drawing.Point(916, 37);
             this.chkAutoFlushEnabled.Name = "chkAutoFlushEnabled";
             this.chkAutoFlushEnabled.Size = new System.Drawing.Size(73, 17);
             this.chkAutoFlushEnabled.TabIndex = 2;
@@ -68,7 +71,7 @@
             // BtWrite
             // 
             this.BtWrite.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtWrite.Location = new System.Drawing.Point(700, 97);
+            this.BtWrite.Location = new System.Drawing.Point(914, 97);
             this.BtWrite.Name = "BtWrite";
             this.BtWrite.Size = new System.Drawing.Size(75, 23);
             this.BtWrite.TabIndex = 3;
@@ -79,7 +82,7 @@
             // BtFlush
             // 
             this.BtFlush.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtFlush.Location = new System.Drawing.Point(700, 126);
+            this.BtFlush.Location = new System.Drawing.Point(914, 126);
             this.BtFlush.Name = "BtFlush";
             this.BtFlush.Size = new System.Drawing.Size(75, 23);
             this.BtFlush.TabIndex = 4;
@@ -90,7 +93,7 @@
             // btThreadWrite
             // 
             this.btThreadWrite.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btThreadWrite.Location = new System.Drawing.Point(700, 155);
+            this.btThreadWrite.Location = new System.Drawing.Point(914, 155);
             this.btThreadWrite.Name = "btThreadWrite";
             this.btThreadWrite.Size = new System.Drawing.Size(75, 23);
             this.btThreadWrite.TabIndex = 6;
@@ -106,7 +109,7 @@
             // 
             this.chkShowTimeStamp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkShowTimeStamp.AutoSize = true;
-            this.chkShowTimeStamp.Location = new System.Drawing.Point(702, 60);
+            this.chkShowTimeStamp.Location = new System.Drawing.Point(916, 60);
             this.chkShowTimeStamp.Name = "chkShowTimeStamp";
             this.chkShowTimeStamp.Size = new System.Drawing.Size(82, 17);
             this.chkShowTimeStamp.TabIndex = 8;
@@ -119,29 +122,12 @@
             this.propertyGrid1.CategoryForeColor = System.Drawing.SystemColors.InactiveCaptionText;
             this.propertyGrid1.Location = new System.Drawing.Point(12, 37);
             this.propertyGrid1.Name = "propertyGrid1";
-            this.propertyGrid1.Size = new System.Drawing.Size(277, 355);
+            this.propertyGrid1.Size = new System.Drawing.Size(264, 355);
             this.propertyGrid1.TabIndex = 9;
-            // 
-            // diagnosticsTextBox1
-            // 
-            this.diagnosticsTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.diagnosticsTextBox1.FlushEnabled = true;
-            this.diagnosticsTextBox1.ListenerEnabled = false;
-            this.diagnosticsTextBox1.Location = new System.Drawing.Point(295, 12);
-            this.diagnosticsTextBox1.Multiline = true;
-            this.diagnosticsTextBox1.Name = "diagnosticsTextBox1";
-            this.diagnosticsTextBox1.OutputFile = null;
-            this.diagnosticsTextBox1.ReadOnly = true;
-            this.diagnosticsTextBox1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.diagnosticsTextBox1.Size = new System.Drawing.Size(399, 380);
-            this.diagnosticsTextBox1.TabIndex = 7;
-            this.diagnosticsTextBox1.WordWrap = false;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(12, 8);
+            this.button1.Location = new System.Drawing.Point(201, 37);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 10;
@@ -149,11 +135,57 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // propertyGrid2
+            // 
+            this.propertyGrid2.CategoryForeColor = System.Drawing.SystemColors.InactiveCaptionText;
+            this.propertyGrid2.Location = new System.Drawing.Point(282, 37);
+            this.propertyGrid2.Name = "propertyGrid2";
+            this.propertyGrid2.Size = new System.Drawing.Size(264, 355);
+            this.propertyGrid2.TabIndex = 11;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 18);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(90, 13);
+            this.label1.TabIndex = 12;
+            this.label1.Text = "Process Executor";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(279, 18);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(101, 13);
+            this.label2.TabIndex = 13;
+            this.label2.Text = "DiagnosticsTextBox";
+            // 
+            // diagnosticsTextBox1
+            // 
+            this.diagnosticsTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.diagnosticsTextBox1.FlushEnabled = false;
+            this.diagnosticsTextBox1.ListenerEnabled = true;
+            this.diagnosticsTextBox1.Location = new System.Drawing.Point(552, 12);
+            this.diagnosticsTextBox1.Multiline = true;
+            this.diagnosticsTextBox1.Name = "diagnosticsTextBox1";
+            this.diagnosticsTextBox1.ReadOnly = true;
+            this.diagnosticsTextBox1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.diagnosticsTextBox1.Size = new System.Drawing.Size(356, 380);
+            this.diagnosticsTextBox1.TabIndex = 7;
+            this.diagnosticsTextBox1.WordWrap = false;
+            this.diagnosticsTextBox1.WriteToFile = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(799, 404);
+            this.ClientSize = new System.Drawing.Size(1013, 404);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.propertyGrid2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.propertyGrid1);
             this.Controls.Add(this.chkShowTimeStamp);
@@ -182,6 +214,9 @@
         private System.Windows.Forms.CheckBox chkShowTimeStamp;
         private System.Windows.Forms.PropertyGrid propertyGrid1;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.PropertyGrid propertyGrid2;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
     }
 }
 

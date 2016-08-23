@@ -26,8 +26,8 @@ namespace CodeArtEng.Diagnostics
         TraceLoggerFlush OnFlush;
         private bool _EnableTracer;
 
-        public const string NewLineDelimiter = "\r\n";
-        public bool IsNewLine;
+        private const string NewLineDelimiter = "\r\n";
+        private bool IsNewLine;
 
         private void DummyWrite(string message) { }
         private void DummyFlush() { }
@@ -55,7 +55,7 @@ namespace CodeArtEng.Diagnostics
         /// <param name="message">Message received.</param>
         public override void Write(string message)
         {
-            if (ShowTimeStamp && IsNewLine) message = DateTime.Now.ToString() + ": " + message;
+            if (ShowTimeStamp && IsNewLine) message = "[" + DateTime.Now.ToString(TimeStampFormat) + "] " + message;
             OnWrite(message);
             IsNewLine = false;
         }
