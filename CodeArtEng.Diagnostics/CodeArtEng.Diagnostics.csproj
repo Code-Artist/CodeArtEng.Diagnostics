@@ -50,7 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\ProcessExecutor.cs" />
-    <Compile Include="Classes\TraceFileWritter.cs" />
+    <Compile Include="Classes\TraceFileWriter.cs" />
     <Compile Include="Classes\TraceLogger.cs" />
     <Compile Include="Controls\DiagnosticsTextBox.cs">
       <SubType>Component</SubType>

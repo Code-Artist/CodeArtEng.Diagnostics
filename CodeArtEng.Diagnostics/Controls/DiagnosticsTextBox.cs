@@ -21,7 +21,7 @@ namespace CodeArtEng.Diagnostics.Controls
         private Timer refreshTimer;
         private ToolStripMenuItem toolStripSaveToFile;
         private TraceLogger Tracer;
-        private TraceFileWritter OutputFileWriter;
+        private TraceFileWriter OutputFileWriter;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DiagnosticsTextBox"/> class.
@@ -40,7 +40,7 @@ namespace CodeArtEng.Diagnostics.Controls
             Width = Height = 100;
             MessageBuffer = "";
 
-            OutputFileWriter = new TraceFileWritter();
+            OutputFileWriter = new TraceFileWriter();
 
             //Setup listener
             Tracer = new TraceLogger(Tracer_OnWriteMessage, Tracer_OnFlush);

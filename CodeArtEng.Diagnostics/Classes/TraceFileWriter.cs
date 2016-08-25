@@ -6,21 +6,21 @@ namespace CodeArtEng.Diagnostics
     //ToDo: Recovery Loop, from Normal to Backup
 
     /// <summary>
-    /// <see cref="TraceFileWritter"/> Operation Mode.
+    /// <see cref="TraceFileWriter"/> Operation Mode.
     /// </summary>
-    public enum TraceFileWritterMode
+    public enum TraceFileWriterMode
     {
         /// <summary>
         /// Disabled trace writting to file
         /// </summary>
         Disabled,
         /// <summary>
-        /// Recording traces to <see cref="TraceFileWritter.OutputFile"/>
+        /// Recording traces to <see cref="TraceFileWriter.OutputFile"/>
         /// </summary>
         Normal,
         /// <summary>
-        /// Recording traces to <see cref="TraceFileWritter.BackupOutputFile"/>.
-        /// <see cref="TraceFileWritter.OutputFile"/> not accessible or offline.
+        /// Recording traces to <see cref="TraceFileWriter.BackupOutputFile"/>.
+        /// <see cref="TraceFileWriter.OutputFile"/> not accessible or offline.
         /// </summary>
         Backup
     }
@@ -28,7 +28,7 @@ namespace CodeArtEng.Diagnostics
     /// <summary>
     /// Output DEBUG and TRACE log to file.
     /// </summary>
-    public class TraceFileWritter
+    public class TraceFileWriter
     {
         private readonly object WriterLock = new object();
         private TraceLogger Tracer;
@@ -37,7 +37,7 @@ namespace CodeArtEng.Diagnostics
         /// <summary>
         /// Operation Mode.
         /// </summary>
-        public TraceFileWritterMode OperationMode { get; private set; }
+        public TraceFileWriterMode OperationMode { get; private set; }
 
         private string _OutputDir;
         private string _OutputFile;
@@ -107,9 +107,9 @@ namespace CodeArtEng.Diagnostics
 
                     Tracer.Enabled = value;
                     if (Tracer.Enabled)
-                        OperationMode = TraceFileWritterMode.Normal;
+                        OperationMode = TraceFileWriterMode.Normal;
                     else
-                        OperationMode = TraceFileWritterMode.Disabled;
+                        OperationMode = TraceFileWriterMode.Disabled;
                 }
             }
         }
@@ -122,7 +122,7 @@ namespace CodeArtEng.Diagnostics
         /// <summary>
         /// Enable / Disable TraceLogger.
         /// </summary>
-        public TraceFileWritter()
+        public TraceFileWriter()
         {
             Tracer = new TraceLogger(Tracer_OnWriteMessage, Tracer_OnFlush);
             Tracer.Enabled = false;
@@ -139,14 +139,14 @@ namespace CodeArtEng.Diagnostics
             {
                 switch (OperationMode)
                 {
-                    case TraceFileWritterMode.Disabled:
+                    case TraceFileWriterMode.Disabled:
                         break;
 
-                    case TraceFileWritterMode.Normal:
+                    case TraceFileWriterMode.Normal:
                         TryWriteMessageToOutputFile(message);
                         break;
 
-                    case TraceFileWritterMode.Backup:
+                    case TraceFileWriterMode.Backup:
                         TryWriteMessageToBackupFile(message);
                         break;
                 }
@@ -162,7 +162,7 @@ namespace CodeArtEng.Diagnostics
                 {
                     if(string.IsNullOrEmpty(_OutputFile))
                     {
-                        OperationMode = TraceFileWritterMode.Disabled;
+                        OperationMode = TraceFileWriterMode.Disabled;
                         Tracer.Enabled = false;
                         return false;
                     }
@@ -174,13 +174,13 @@ namespace CodeArtEng.Diagnostics
                 }
                 catch
                 {
-                    OperationMode = TraceFileWritterMode.Disabled;
+                    OperationMode = TraceFileWriterMode.Disabled;
                     if (string.IsNullOrEmpty(_BackupOutputFile)) return false;
                     if (SetupBackupLogFile() == false) return false;
                     if (TryWriteMessageToBackupFile(message) == false) return false;
 
                     //Start Recovery Thread
-                    OperationMode = TraceFileWritterMode.Backup;
+                    OperationMode = TraceFileWriterMode.Backup;
                     RecoveryThread = new Thread(Recovery);
                     RecoveryThread.Start();
                     return true;
@@ -202,7 +202,7 @@ namespace CodeArtEng.Diagnostics
 
                         string filebuffer = File.ReadAllText(_BackupOutputFile);
                         File.AppendAllText(_OutputFile, filebuffer);
-                        OperationMode = TraceFileWritterMode.Normal;
+                        OperationMode = TraceFileWriterMode.Normal;
                         return;
                     }
                     catch
@@ -237,7 +237,7 @@ namespace CodeArtEng.Diagnostics
                 }
                 catch
                 {
-                    OperationMode = TraceFileWritterMode.Disabled;
+                    OperationMode = TraceFileWriterMode.Disabled;
                     return false;
                 }
             }

@@ -10,14 +10,14 @@ using System.Diagnostics;
 namespace CodeArtEng.Diagnostics.Tests
 {
     [TestFixture]
-    class TraceFileWritterTests
+    class TraceFileWriterTests
     {
-        TraceFileWritter fileWritter;
+        TraceFileWriter fileWritter;
         private string OutputFile, BackupFile, OutputFileInvalid;
 
-        public TraceFileWritterTests()
+        public TraceFileWriterTests()
         {
-            fileWritter = new TraceFileWritter();
+            fileWritter = new TraceFileWriter();
             fileWritter.OutputFile = OutputFile = ".\\Output\\Log.txt";
             fileWritter.BackupOutputFile = BackupFile = ".\\Backup\\Log.txt";
             OutputFileInvalid = "A:\\Output\\Log.txt";
@@ -72,7 +72,7 @@ namespace CodeArtEng.Diagnostics.Tests
                 fileWritter.BackupOutputFile = OutputFileInvalid;
                 fileWritter.ListenerEnabled = true;
                 Debug.WriteLine("Testing");
-                Assert.AreEqual(TraceFileWritterMode.Disabled, fileWritter.OperationMode);
+                Assert.AreEqual(TraceFileWriterMode.Disabled, fileWritter.OperationMode);
             }
             finally
             {
@@ -97,13 +97,13 @@ namespace CodeArtEng.Diagnostics.Tests
             fileWritter.RetryInterval_ms = 10;
             fileWritter.ListenerEnabled = true;
             WriteTestStrings(1, 1000);
-            Assert.AreEqual(TraceFileWritterMode.Normal, fileWritter.OperationMode);
+            Assert.AreEqual(TraceFileWriterMode.Normal, fileWritter.OperationMode);
             fileWritter.OutputFile = OutputFileInvalid;
             WriteTestStrings(1001, 2000);
-            Assert.AreEqual(TraceFileWritterMode.Backup, fileWritter.OperationMode);
+            Assert.AreEqual(TraceFileWriterMode.Backup, fileWritter.OperationMode);
             fileWritter.OutputFile = OutputFile;
             WriteTestStrings(2001, 3000);
-            Assert.AreEqual(TraceFileWritterMode.Normal, fileWritter.OperationMode);
+            Assert.AreEqual(TraceFileWriterMode.Normal, fileWritter.OperationMode);
             fileWritter.ListenerEnabled = false;
             fileWritter.ShowTimeStamp = false;
 
