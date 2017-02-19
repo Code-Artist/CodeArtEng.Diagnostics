@@ -122,7 +122,10 @@ namespace CodeArtEng.Diagnostics.Controls
         private void Tracer_OnWriteMessage(string message)
         {
             if (IsInDesignMode(this)) return;
-            MessageBuffer += message;
+            lock (LockObject)
+            {
+                MessageBuffer += message;
+            }
         }
         private void Tracer_OnFlush()
         {

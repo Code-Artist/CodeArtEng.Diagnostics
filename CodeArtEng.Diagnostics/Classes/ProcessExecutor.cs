@@ -7,8 +7,6 @@ using System.Management;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
-//ToDo: Implemnt IDisposable to stop listen from output.
-
 namespace CodeArtEng.Diagnostics
 {
     /// <summary>
@@ -37,7 +35,7 @@ namespace CodeArtEng.Diagnostics
     /// <summary>
     /// Execute Console based application without showing the console window.
     /// </summary>
-    public class ProcessExecutor
+    public class ProcessExecutor : IDisposable
     {
         ProcessStartInfo processInfo;
         List<string> outputData;
@@ -92,6 +90,14 @@ namespace CodeArtEng.Diagnostics
         public bool TraceLogEnabled { get; set; }
 
         /// <summary>
+        /// Enable / Disable input read from System.Diagnostics.Process.StandardInput stream.
+        /// </summary>
+        [Category("General")]
+        [Description("Enable / Disable input read from System.Diagnostics.Process.StandardInput stream.\nSet to true when use as terminal (cmd.exe).\nDisabled by default.")]
+        [DefaultValue(false)]
+        public bool RedirectStandardInput { get; set; }
+
+        /// <summary>
         /// Show / Hide Console Window.
         /// </summary>
         [Category("Display")]
@@ -100,7 +106,7 @@ namespace CodeArtEng.Diagnostics
         public bool ShowConsoleWindow { get; set; }
 
         /// <summary>
-        /// Get Process Handler
+        /// Get Process Handler. Only valid when <see cref="ShowConsoleWindow"/> set to false.
         /// </summary>
         [Browsable(false)]
         public Process ProcessHandler { get; private set; }
@@ -184,14 +190,15 @@ namespace CodeArtEng.Diagnostics
                 processInfo.UseShellExecute = ShowConsoleWindow;
                 processInfo.RedirectStandardOutput = !ShowConsoleWindow;
                 processInfo.RedirectStandardError = !ShowConsoleWindow;
+                processInfo.RedirectStandardInput = RedirectStandardInput;
                 if (!string.IsNullOrEmpty(UserName))
                 {
                     processInfo.UserName = UserName;
                     processInfo.Password = ssPwd;
                     processInfo.Domain = DomainName;
                 }
-                Trace.WriteLine(Name + ": Executing: " + processInfo.FileName + " " + processInfo.Arguments + 
-                    (string.IsNullOrEmpty(processInfo.UserName) ?  "" : " as " + processInfo.Domain + "\\" +  processInfo.UserName));
+                Trace.WriteLine(Name + ": Executing: " + processInfo.FileName + " " + processInfo.Arguments +
+                    (string.IsNullOrEmpty(processInfo.UserName) ? "" : " as " + processInfo.Domain + "\\" + processInfo.UserName));
                 if (ProcessHandler != null) DisposeProcessHandler();
                 ProcessHandler = Process.Start(processInfo);
                 if (!ShowConsoleWindow)
@@ -301,13 +308,13 @@ namespace CodeArtEng.Diagnostics
 
         private void DisposeProcessHandler()
         {
+            if (ProcessHandler == null) return;
             ProcessHandler.Exited -= process_Exited;
             ProcessHandler.OutputDataReceived -= process_OutputDataReceived;
             ProcessHandler.ErrorDataReceived -= process_ErrorDataReceived;
             ProcessHandler.Dispose();
             ProcessHandler = null;
         }
-
         private static void KillProcessAndChildren(int pid)
         {
             ManagementObjectSearcher searcher = new ManagementObjectSearcher("Select * From Win32_Process Where ParentProcessID=" + pid);
@@ -326,29 +333,38 @@ namespace CodeArtEng.Diagnostics
                 // Process already exited.
             }
         }
+
+        //ToDo: Review exception : "Source array was not long enough. Check srcIndex and length, and the array's lower bounds."
+
+        private object tLock = new object();
+
         private void process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
-            //ToDo: Review exception : "Source array was not long enough. Check srcIndex and length, and the array's lower bounds."
-            if (e.Data != null)
+            lock (tLock)
             {
-                string data = e.Data;
-                errorDetected = true;
-                if (RedirectToFile) System.IO.File.AppendAllText(LogFile, data + "\r\n");
-                else outputData.Add(data);
-                if (TraceLogEnabled) Trace.WriteLine(Name + ": " + data);
+
+                if (e.Data != null)
+                {
+                    errorDetected = true;
+                    if (RedirectToFile) System.IO.File.AppendAllText(LogFile, e.Data + "\r\n");
+                    else outputData.Add(e.Data);
+                    if (TraceLogEnabled) Trace.WriteLine(Name + ": " + e.Data);
+                }
             }
         }
         private void process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            //ToDo: Review exception : "Source array was not long enough. Check srcIndex and length, and the array's lower bounds."
-            if (e.Data != null)
+            lock (tLock)
             {
-                string data = e.Data;
-                if (RedirectToFile) System.IO.File.AppendAllText(LogFile, data + "\r\n");
-                else outputData.Add(data);
-                if (TraceLogEnabled) Trace.WriteLine(Name + ": " + data);
+                if (e.Data != null)
+                {
+                    if (RedirectToFile) System.IO.File.AppendAllText(LogFile, e.Data + "\r\n");
+                    else outputData.Add(e.Data);
+                    if (TraceLogEnabled) Trace.WriteLine(Name + ": " + e.Data);
+                }
             }
         }
+
 
         #endregion
 
@@ -376,5 +392,31 @@ namespace CodeArtEng.Diagnostics
         }
 
         #endregion
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        internal virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    DisposeProcessHandler();
+                }
+                disposedValue = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+        }
+        #endregion
+
     }
 }

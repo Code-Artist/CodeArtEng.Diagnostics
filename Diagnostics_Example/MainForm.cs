@@ -13,6 +13,7 @@ namespace Diagnostics_Example
     public partial class MainForm : Form
     {
         private CodeArtEng.Diagnostics.ProcessExecutor procExecutor;
+        private CodeArtEng.Diagnostics.ProcessExecutor terminal = null;
 
         public MainForm()
         {
@@ -28,6 +29,7 @@ namespace Diagnostics_Example
             procExecutor.TraceLogEnabled = true;
             propertyGrid1.SelectedObject = procExecutor;
             propertyGrid2.SelectedObject = diagnosticsTextBox1;
+
         }
 
         private void chkListenerEnabled_CheckedChanged(object sender, EventArgs e)
@@ -97,7 +99,41 @@ namespace Diagnostics_Example
                 foreach (string line in result.Output)
                     Trace.WriteLine(line);
             }
+        }
 
+        private void btStartTerminal_Click(object sender, EventArgs e)
+        {
+            if (terminal != null) terminal.Dispose();
+            terminal = new CodeArtEng.Diagnostics.ProcessExecutor();
+            terminal.Application = "cmd.exe";
+            terminal.TraceLogEnabled = true;
+            terminal.Name = "Terminal";
+            terminal.ShowConsoleWindow = false;
+            terminal.RedirectStandardInput = true;
+            terminal.RedirectOutputToFile("Terminal.txt");
+            terminal.Execute(false);
+        }
+
+        private void btStopTerminal_Click(object sender, EventArgs e)
+        {
+            terminal.Dispose();
+            terminal = null;
+        }
+
+        private void txtTerminalCmd_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyData == Keys.Return)
+            {
+                if (terminal == null) return;
+                terminal.ProcessHandler.StandardInput.WriteLine(txtTerminalCmd.Text);
+                txtTerminalCmd.Text = string.Empty;
+            }
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (terminal != null) terminal.Dispose();
+            procExecutor.Dispose();
         }
     }
 }
