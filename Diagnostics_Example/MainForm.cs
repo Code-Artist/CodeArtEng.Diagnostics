@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
+using CodeArtEng.Diagnostics;
 
 namespace Diagnostics_Example
 {
@@ -25,7 +27,7 @@ namespace Diagnostics_Example
             chkAutoFlushEnabled.Checked = diagnosticsTextBox1.FlushEnabled;
 
             procExecutor = new CodeArtEng.Diagnostics.ProcessExecutor();
-            procExecutor.Application = "..\\..\\TestA.bat";
+            procExecutor.Application = "../../TestA.bat";
             procExecutor.TraceLogEnabled = true;
             propertyGrid1.SelectedObject = procExecutor;
             propertyGrid2.SelectedObject = diagnosticsTextBox1;
@@ -59,6 +61,9 @@ namespace Diagnostics_Example
             
             for(int x = 0; x < 20; x++)
                 Trace.WriteLine("Line " + x.ToString());
+
+
+            Trace.WriteLine("Multiline String:\r\nLine 1\rLine2\nLine3");
         }
 
         private void WorkerThread_DoWork(object sender, DoWorkEventArgs e)
@@ -134,6 +139,21 @@ namespace Diagnostics_Example
         {
             if (terminal != null) terminal.Dispose();
             procExecutor.Dispose();
+        }
+
+        private void diagnosticsTextBox1_MessageReceived(object sender, CodeArtEng.Diagnostics.Controls.TextEventArgs e)
+        {
+            if (e.Message.Contains("4")) e.Message = string.Empty; //Filter any message contains '4'
+        }
+
+        private void BtProfilerTest_Click(object sender, EventArgs e)
+        {
+            CodeProfiler.Start("Test Timer 1");
+            Thread.Sleep(100);
+            CodeProfiler.Start("Test Timer 2");
+            Thread.Sleep(100);
+            CodeProfiler.Stop("Test Timer 1");
+            CodeProfiler.Stop("Test Timer 2");
         }
     }
 }

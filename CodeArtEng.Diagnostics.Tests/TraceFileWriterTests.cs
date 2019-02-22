@@ -1,111 +1,105 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit.Framework;
-using System.IO;
+﻿using NUnit.Framework;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+
+//ToDo: Review Test Cases
 
 namespace CodeArtEng.Diagnostics.Tests
 {
     [TestFixture]
     class TraceFileWriterTests
     {
-        TraceFileWriter fileWritter;
-        private string OutputFile, BackupFile, OutputFileInvalid;
+        private string OutputFile, BackupFile;
+        private static string OutputFileInvalid = "A:/Output/Log.txt";
 
-        public TraceFileWriterTests()
+        public TraceFileWriter SetupTraceFileWritter(string outputFile, string backupFile)
         {
-            fileWritter = new TraceFileWriter();
-            fileWritter.OutputFile = OutputFile = ".\\Output\\Log.txt";
-            fileWritter.BackupOutputFile = BackupFile = ".\\Backup\\Log.txt";
-            OutputFileInvalid = "A:\\Output\\Log.txt";
-            fileWritter.ListenerEnabled = false;
+            TraceFileWriter traceWriter = new TraceFileWriter();
+            traceWriter.ListenerEnabled = false;
+            traceWriter.OutputFile = OutputFile = outputFile;
+            traceWriter.BackupOutputFile = BackupFile = backupFile;
+            if (File.Exists(OutputFile)) File.Delete(OutputFile);
+            if (File.Exists(BackupFile)) File.Delete(BackupFile);
+            return traceWriter;
         }
 
         [Test]
         public void WriteOutputNormalMode()
         {
-            if (File.Exists(OutputFile)) File.Delete(OutputFile);
-            Directory.Delete(Path.GetDirectoryName(OutputFile));
-            fileWritter.ListenerEnabled = true;
+            TraceFileWriter traceWriter = SetupTraceFileWritter("./Output/NormalLog.txt", "./Backup/NormalLog.txt");
+            traceWriter.ListenerEnabled = true;
             WriteTestStrings(1, 100);
-            fileWritter.ListenerEnabled = false;
+            Assert.AreEqual(TraceFileWriterMode.Normal, traceWriter.OperationMode);
+            traceWriter.ListenerEnabled = false;
             Assert.AreEqual(100, File.ReadAllLines(OutputFile).Count());
+            Assert.IsFalse(File.Exists(traceWriter.BackupOutputFile));
+
         }
 
         public void WriteTestStrings(int start, int end)
         {
             for (int x = start; x <= end; x++)
             {
-                Debug.WriteLine(string.Format("Test String : {0}", x));
+                Trace.WriteLine(string.Format("Test String : {0}", x));
+            }
+        }
+
+        public void WriteTestStrings(int start, int end, string comment)
+        {
+            for (int x = start; x <= end; x++)
+            {
+                Trace.WriteLine(string.Format("Test String : {0} : {1}", x, comment));
             }
         }
 
         [Test]
         public void WriteOutputBackupMode()
         {
-            try
-            {
-                if (File.Exists(BackupFile)) File.Delete(BackupFile);
-                Directory.Delete(Path.GetDirectoryName(BackupFile));
-                fileWritter.OutputFile = OutputFileInvalid;
-                fileWritter.ListenerEnabled = true;
-                WriteTestStrings(1, 200);
-                fileWritter.ListenerEnabled = false;
-                Assert.AreEqual(200, File.ReadAllLines(BackupFile).Count());
-            }
-            finally
-            {
-                fileWritter.ListenerEnabled = false;
-                fileWritter.OutputFile = OutputFile;
-            }
+            TraceFileWriter traceWriter = SetupTraceFileWritter(OutputFileInvalid, "./Backup/BackupLog.txt");
+            traceWriter.ListenerEnabled = true;
+            WriteTestStrings(1, 200);
+            Assert.AreEqual(TraceFileWriterMode.Backup, traceWriter.OperationMode);
+            traceWriter.ListenerEnabled = false;
+            Assert.AreEqual(200, File.ReadAllLines(BackupFile).Count());
         }
 
         [Test]
         public void WriteOutputInvalidPathDisabled()
         {
-            try
-            {
-                fileWritter.OutputFile = OutputFileInvalid;
-                fileWritter.BackupOutputFile = OutputFileInvalid;
-                fileWritter.ListenerEnabled = true;
-                Debug.WriteLine("Testing");
-                Assert.AreEqual(TraceFileWriterMode.Disabled, fileWritter.OperationMode);
-            }
-            finally
-            {
-                fileWritter.ListenerEnabled = false;
-                fileWritter.OutputFile = OutputFile;
-                fileWritter.BackupOutputFile = BackupFile;
-            }
+            TraceFileWriter traceWriter = SetupTraceFileWritter(OutputFileInvalid, OutputFileInvalid);
+            traceWriter.OutputFile = OutputFileInvalid;
+            traceWriter.BackupOutputFile = OutputFileInvalid;
+            traceWriter.ListenerEnabled = true;
+            Trace.WriteLine("Testing");
+            Assert.AreEqual(TraceFileWriterMode.Disabled, traceWriter.OperationMode);
         }
 
         [Test]
         public void RecoveryMode()
         {
-            string outputPath = Path.GetDirectoryName(OutputFile);
-            if (File.Exists(OutputFile)) File.Delete(OutputFile);
-            if(Directory.Exists(outputPath)) Directory.Delete(outputPath);
-
-            string backupPath = Path.GetDirectoryName(BackupFile);
-            if (File.Exists(BackupFile)) File.Delete(BackupFile);
-            if(Directory.Exists(backupPath)) Directory.Delete(backupPath);
-
-            fileWritter.ShowTimeStamp = true;
-            fileWritter.RetryInterval_ms = 10;
-            fileWritter.ListenerEnabled = true;
+            string recoveryOutputFile = "./Output/RecoveryLog.txt";
+            TraceFileWriter traceWriter = SetupTraceFileWritter(recoveryOutputFile, "./Backup/RecoverLog.txt");
+            traceWriter.ShowTimeStamp = true;
+            traceWriter.RetryInterval_ms = 10;
+            traceWriter.ListenerEnabled = true;
+            
+            //Normal Mode
             WriteTestStrings(1, 1000);
-            Assert.AreEqual(TraceFileWriterMode.Normal, fileWritter.OperationMode);
-            fileWritter.OutputFile = OutputFileInvalid;
-            WriteTestStrings(1001, 2000);
-            Assert.AreEqual(TraceFileWriterMode.Backup, fileWritter.OperationMode);
-            fileWritter.OutputFile = OutputFile;
+            Assert.AreEqual(TraceFileWriterMode.Normal, traceWriter.OperationMode);
+
+            //Backup Mode
+            traceWriter.OutputFile = OutputFileInvalid;
+            WriteTestStrings(1001, 2000, "Backup Mode");
+            Assert.AreEqual(TraceFileWriterMode.Backup, traceWriter.OperationMode);
+
+            //Recovery Mode
+            traceWriter.OutputFile = recoveryOutputFile;
             WriteTestStrings(2001, 3000);
-            Assert.AreEqual(TraceFileWriterMode.Normal, fileWritter.OperationMode);
-            fileWritter.ListenerEnabled = false;
-            fileWritter.ShowTimeStamp = false;
+            Assert.AreEqual(TraceFileWriterMode.Normal, traceWriter.OperationMode);
+
+            traceWriter.ListenerEnabled = false;
+            traceWriter.ShowTimeStamp = false;
 
             Assert.AreEqual(3000, File.ReadAllLines(OutputFile).Count());
         }

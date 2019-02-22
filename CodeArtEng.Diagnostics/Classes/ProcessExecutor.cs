@@ -78,7 +78,7 @@ namespace CodeArtEng.Diagnostics
         /// Root Directory
         /// </summary>
         [Category("General")]
-        [Description("Root Directory")]
+        [Description("Root Directory. Path with spaces should be enter without double quote.")]
         public string WorkingDirectory { get; set; }
 
         /// <summary>
@@ -106,10 +106,24 @@ namespace CodeArtEng.Diagnostics
         public bool ShowConsoleWindow { get; set; }
 
         /// <summary>
-        /// Get Process Handler. Only valid when <see cref="ShowConsoleWindow"/> set to false.
+        /// Get Process Handler for current execution. Return null if execution completed.
         /// </summary>
         [Browsable(false)]
         public Process ProcessHandler { get; private set; }
+
+        /// <summary>
+        /// Check if execution is completed.
+        /// </summary>
+        [Browsable(false)]
+        public bool HasExited
+        {
+            get
+            {
+                Process ptrProcess = ProcessHandler;
+                if (ptrProcess == null) return true;
+                return ptrProcess.HasExited;
+            }
+        }
 
         /// <summary>
         /// Gets or sets a value that identifies the domain to use when starting the process. Default value is current domain.
@@ -183,8 +197,8 @@ namespace CodeArtEng.Diagnostics
             {
                 processInfo = new ProcessStartInfo();
                 processInfo.FileName = Application;
-                if (Application.Contains(" ")) processInfo.FileName = "\"" + processInfo.FileName + "\"";
-                processInfo.WorkingDirectory = WorkingDirectory;
+                if (Application.Contains(" ") && !Application.StartsWith("\"")) processInfo.FileName = "\"" + processInfo.FileName + "\"";
+                processInfo.WorkingDirectory = WorkingDirectory?.Replace("\"", "");
                 processInfo.Arguments = Arguments;
                 processInfo.CreateNoWindow = !ShowConsoleWindow;
                 processInfo.UseShellExecute = ShowConsoleWindow;
@@ -217,20 +231,21 @@ namespace CodeArtEng.Diagnostics
 
                 ProcessHandler.WaitForExit();
                 result.ExitCode = ProcessHandler.ExitCode;
+                DisposeProcessHandler();
+
+                result.ErrorDetected = errorDetected;
+                result.Output = outputData.ToArray();
+                return result;
             }
             catch (Exception ex)
             {
                 result.Output = new string[] { ex.Message.ToString() };
                 result.ErrorDetected = true;
                 result.ExitCode = -999;
+                Trace.WriteLine(Name + ": Exception Raised (-999): " + ex.Message);
                 return result;
             }
-            ProcessHandler.OutputDataReceived -= process_OutputDataReceived;
-            ProcessHandler.ErrorDataReceived -= process_ErrorDataReceived;
 
-            result.ErrorDetected = errorDetected;
-            result.Output = outputData.ToArray();
-            return result;
         }
 
         /// <summary>
@@ -300,6 +315,10 @@ namespace CodeArtEng.Diagnostics
         {
             if (ProcessHandler == null) return;
             if (ProcessHandler.HasExited) return;
+            //It's mandatory to unsubscribe event before kill process to avoid dead lock.
+            ProcessHandler.Exited -= process_Exited;
+            ProcessHandler.OutputDataReceived -= process_OutputDataReceived;
+            ProcessHandler.ErrorDataReceived -= process_ErrorDataReceived;
             KillProcessAndChildren(ProcessHandler.Id);
             DisposeProcessHandler();
         }
@@ -346,7 +365,7 @@ namespace CodeArtEng.Diagnostics
                 if (e.Data != null)
                 {
                     errorDetected = true;
-                    if (RedirectToFile) System.IO.File.AppendAllText(LogFile, e.Data + "\r\n");
+                    if (RedirectToFile) System.IO.File.AppendAllText(LogFile, e.Data + System.Environment.NewLine);
                     else outputData.Add(e.Data);
                     if (TraceLogEnabled) Trace.WriteLine(Name + ": " + e.Data);
                 }
@@ -358,7 +377,7 @@ namespace CodeArtEng.Diagnostics
             {
                 if (e.Data != null)
                 {
-                    if (RedirectToFile) System.IO.File.AppendAllText(LogFile, e.Data + "\r\n");
+                    if (RedirectToFile) System.IO.File.AppendAllText(LogFile, e.Data + System.Environment.NewLine);
                     else outputData.Add(e.Data);
                     if (TraceLogEnabled) Trace.WriteLine(Name + ": " + e.Data);
                 }
@@ -373,10 +392,10 @@ namespace CodeArtEng.Diagnostics
         /// <summary>
         /// Event raised when process is completed.
         /// </summary>
-        public event EventHandler<ProcessResult> HasExited;
+        public event EventHandler<ProcessResult> Exited;
         private void process_Exited(object sender, EventArgs e)
         {
-            EventHandler<ProcessResult> handler = HasExited;
+            EventHandler<ProcessResult> handler = Exited;
             if (handler != null)
             {
                 ProcessResult procResult =

@@ -21,7 +21,23 @@ namespace CodeArtEng.Diagnostics.Controls
         private Timer refreshTimer;
         private ToolStripMenuItem toolStripSaveToFile;
         private TraceLogger Tracer;
+        private ToolStripMenuItem toolStripCopyAll;
+        private ToolStripMenuItem toolStripCopySelected;
         private TraceFileWriter OutputFileWriter;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                refreshTimer.Enabled = false;
+                Tracer.Enabled = false;
+            }
+            base.Dispose(disposing);
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DiagnosticsTextBox"/> class.
@@ -32,18 +48,18 @@ namespace CodeArtEng.Diagnostics.Controls
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true); //Double Buffer
 
             //Default control property
-            Multiline = true;
+            base.Multiline = true;
             ScrollBars = System.Windows.Forms.ScrollBars.Both;
             DisplayBufferSize = 0;
 
-            ReadOnly = true;
+            base.ReadOnly = true;
             Width = Height = 100;
             MessageBuffer = "";
 
             OutputFileWriter = new TraceFileWriter();
 
             //Setup listener
-            Tracer = new TraceLogger(Tracer_OnWriteMessage, Tracer_OnFlush);
+            Tracer = new TraceLogger(Tracer_OnWriteMessage, Tracer_OnFlush, Tracer_OnMessageReceived);
             ConfigureFileWritter();
         }
         private static bool IsInDesignMode(IComponent component)
@@ -64,6 +80,20 @@ namespace CodeArtEng.Diagnostics.Controls
             }
             return ret;
         }
+
+        #region [ Hide Base Class Property ]
+        [Browsable(false)]
+        private new bool AcceptsReturn { get; set; }
+
+        [Browsable(false)]
+        private new bool AcceptsTab { get; set; }
+
+        [Browsable(false)]
+        private new bool ReadOnly { get; set; }
+
+        [Browsable(false)]
+        private new bool Multiline { get; set; } = true;
+        #endregion
 
         /// <summary>
         /// Enable / Disable trace listener to capture message from trace source.
@@ -111,6 +141,39 @@ namespace CodeArtEng.Diagnostics.Controls
         }
 
         /// <summary>
+        /// Define time stamp string format when <see cref="TimeStampStyle"/> set as <see cref="TraceTimeStampStyle.DateTimeString"/> 
+        /// </summary>
+        [Category("Trace Listener")]
+        [DisplayName("TimeStampFormat")]
+        [Description("Define time stamp string format when TimeStampStyle set as DateTimeString")]
+        public string TimeStampFormat
+        {
+            get { return Tracer.TimeStampFormat; }
+            set
+            {
+                Tracer.TimeStampFormat = value;
+                OutputFileWriter.TimeStampFormat = value;
+            }
+        }
+
+        /// <summary>
+        /// Define time stamp style.
+        /// </summary>
+        [Category("Trace Listener")]
+        [DisplayName("TimeStampStyle")]
+        [Description("Define time stamp style")]
+        [DefaultValue(TraceTimeStampStyle.DateTimeString)]
+        public TraceTimeStampStyle TimeStampStyle
+        {
+            get { return Tracer.TimeStampStyle; }
+            set
+            {
+                Tracer.TimeStampStyle = value;
+                OutputFileWriter.TimeStampStyle = value;
+            }
+        }
+
+        /// <summary>
         /// Define number of lines to be keep in text box. Set to 0 to keep all lines.
         /// </summary>
         [Category("Trace Listener")]
@@ -132,6 +195,23 @@ namespace CodeArtEng.Diagnostics.Controls
             if (FlushEnabled) this.Clear();
         }
 
+        private void Tracer_OnMessageReceived(ref string message)
+        {
+            //Message filter implementation. 
+            if(MessageReceived != null)
+            {
+                TextEventArgs eArg = new TextEventArgs() { Message = message };
+                MessageReceived.Invoke(this, eArg);
+                message = eArg.Message;
+            }
+        }
+
+        /// <summary>
+        /// Occur when message is received by Trace Listener.
+        /// </summary>
+        [DisplayName("MessageReceived")]
+        public event EventHandler<TextEventArgs> MessageReceived;
+
         private delegate void WriteDelegate(string message);
         private void HandleWriteEvent(string message)
         {
@@ -152,8 +232,10 @@ namespace CodeArtEng.Diagnostics.Controls
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripEnabled = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripClear = new System.Windows.Forms.ToolStripMenuItem();
-            this.refreshTimer = new System.Windows.Forms.Timer(this.components);
             this.toolStripSaveToFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.refreshTimer = new System.Windows.Forms.Timer(this.components);
+            this.toolStripCopyAll = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripCopySelected = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -162,23 +244,31 @@ namespace CodeArtEng.Diagnostics.Controls
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripEnabled,
             this.toolStripClear,
-            this.toolStripSaveToFile});
+            this.toolStripSaveToFile,
+            this.toolStripCopySelected,
+            this.toolStripCopyAll});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(143, 70);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(174, 114);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             this.contextMenuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.contextMenuStrip1_ItemClicked);
             // 
             // toolStripEnabled
             // 
             this.toolStripEnabled.Name = "toolStripEnabled";
-            this.toolStripEnabled.Size = new System.Drawing.Size(142, 22);
+            this.toolStripEnabled.Size = new System.Drawing.Size(173, 22);
             this.toolStripEnabled.Text = "Enabled";
             // 
             // toolStripClear
             // 
             this.toolStripClear.Name = "toolStripClear";
-            this.toolStripClear.Size = new System.Drawing.Size(142, 22);
+            this.toolStripClear.Size = new System.Drawing.Size(173, 22);
             this.toolStripClear.Text = "Clear";
+            // 
+            // toolStripSaveToFile
+            // 
+            this.toolStripSaveToFile.Name = "toolStripSaveToFile";
+            this.toolStripSaveToFile.Size = new System.Drawing.Size(173, 22);
+            this.toolStripSaveToFile.Text = "Save to File...";
             // 
             // refreshTimer
             // 
@@ -186,11 +276,17 @@ namespace CodeArtEng.Diagnostics.Controls
             this.refreshTimer.Interval = 10;
             this.refreshTimer.Tick += new System.EventHandler(this.refreshTimer_Tick);
             // 
-            // toolStripSaveToFile
+            // toolStripCopyAll
             // 
-            this.toolStripSaveToFile.Name = "toolStripSaveToFile";
-            this.toolStripSaveToFile.Size = new System.Drawing.Size(142, 22);
-            this.toolStripSaveToFile.Text = "Save to File...";
+            this.toolStripCopyAll.Name = "toolStripCopyAll";
+            this.toolStripCopyAll.Size = new System.Drawing.Size(173, 22);
+            this.toolStripCopyAll.Text = "Copy All";
+            // 
+            // toolStripCopySelected
+            // 
+            this.toolStripCopySelected.Name = "toolStripCopySelected";
+            this.toolStripCopySelected.Size = new System.Drawing.Size(173, 22);
+            this.toolStripCopySelected.Text = "Copy Selected Text";
             // 
             // DiagnosticsTextBox
             // 
@@ -226,7 +322,14 @@ namespace CodeArtEng.Diagnostics.Controls
                         System.IO.File.WriteAllText(dlg.FileName, this.Text);
                     }
                 }
-
+            }
+            else if (e.ClickedItem == toolStripCopyAll)
+            {
+                Clipboard.SetText(Text);
+            }
+            else if (e.ClickedItem == toolStripCopySelected)
+            {
+                Clipboard.SetText(SelectedText);
             }
         }
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
@@ -286,8 +389,7 @@ namespace CodeArtEng.Diagnostics.Controls
 
         private bool _WriteToFile = false;
         /// <summary>
-        /// This flag is set to true when writting to <see cref="OutputFile"/> failed.
-        /// Set to false to re-enable output log.
+        /// Set this flag to true to enable writing log to OutputFile.
         /// </summary>
         [Category("Trace Listener")]
         [DisplayName("WriteToFile")]
@@ -314,4 +416,16 @@ namespace CodeArtEng.Diagnostics.Controls
             OutputFileWriter.ListenerEnabled = (ListenerEnabled && _WriteToFile);
         }
     }
+
+    /// <summary>
+    /// Diagnostics Text Box event arguments
+    /// </summary>
+    public class TextEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Incoming Debug / Trace message.
+        /// </summary>
+        public string Message { get; set; }
+    }
+
 }

@@ -120,7 +120,23 @@ namespace CodeArtEng.Diagnostics
         public bool ShowTimeStamp { get { return Tracer.ShowTimeStamp; } set { Tracer.ShowTimeStamp = value; } }
 
         /// <summary>
-        /// Enable / Disable TraceLogger.
+        /// Define date time display format when <see cref="TimeStampStyle"/> set as <see cref="TraceTimeStampStyle.DateTimeString"/>  . Use default format if undefined.
+        /// Time stamp is append in front of message when <see cref="ShowTimeStamp"/> is enabled.
+        /// </summary>
+        public string TimeStampFormat
+        {
+            get { return Tracer.TimeStampFormat; }
+            set { Tracer.TimeStampFormat = value; }
+        }
+
+        /// <summary>
+        /// Define time stamp style.
+        /// </summary>
+        /// <seealso cref="TimeStampFormat"/>
+        public TraceTimeStampStyle TimeStampStyle { get; set; } = TraceTimeStampStyle.DateTimeString;
+
+        /// <summary>
+        /// Constructor
         /// </summary>
         public TraceFileWriter()
         {
@@ -160,7 +176,7 @@ namespace CodeArtEng.Diagnostics
             {
                 try
                 {
-                    if(string.IsNullOrEmpty(_OutputFile))
+                    if (string.IsNullOrEmpty(_OutputFile))
                     {
                         OperationMode = TraceFileWriterMode.Disabled;
                         Tracer.Enabled = false;
@@ -203,6 +219,7 @@ namespace CodeArtEng.Diagnostics
                         string filebuffer = File.ReadAllText(_BackupOutputFile);
                         File.AppendAllText(_OutputFile, filebuffer);
                         OperationMode = TraceFileWriterMode.Normal;
+                        File.Delete(_BackupOutputFile);
                         return;
                     }
                     catch
