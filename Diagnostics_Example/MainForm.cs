@@ -30,19 +30,25 @@ namespace Diagnostics_Example
             procExecutor.Application = "../../TestA.bat";
             procExecutor.TraceLogEnabled = true;
             propertyGrid1.SelectedObject = procExecutor;
-            propertyGrid2.SelectedObject = diagnosticsTextBox1;
+            propertyGrid2.SelectedObject = diagnosticsRichTextBox1;
+
+            diagnosticsRichTextBox1.AddFormattingRule("Thread", Color.Blue);
+            diagnosticsRichTextBox1.AddFormattingRule("Line 10", Color.Blue);
+            diagnosticsRichTextBox1.AddFormattingRule("Trace Message 9", Color.Red);
 
         }
 
         private void chkListenerEnabled_CheckedChanged(object sender, EventArgs e)
         {
             diagnosticsTextBox1.ListenerEnabled = chkListenerEnabled.Checked;
+            diagnosticsRichTextBox1.ListenerEnabled = !chkListenerEnabled.Checked;
             propertyGrid2.Refresh();
         }
 
         private void chkAutoFlushEnabled_CheckedChanged(object sender, EventArgs e)
         {
             diagnosticsTextBox1.FlushEnabled = chkAutoFlushEnabled.Checked;
+            diagnosticsRichTextBox1.FlushEnabled = chkAutoFlushEnabled.Checked;
             propertyGrid2.Refresh();
         }
 
@@ -79,6 +85,7 @@ namespace Diagnostics_Example
 
         private void btThreadWrite_Click(object sender, EventArgs e)
         {
+            CodeProfiler.Start("Thread Write");
             WorkerThread.RunWorkerAsync();
             for (int x = 0; x < 100; x++)
             {
@@ -87,11 +94,14 @@ namespace Diagnostics_Example
                 System.Threading.Thread.Sleep(20);
                 Application.DoEvents();
             }
+
+            CodeProfiler.Stop("Thread Write");
         }
 
         private void chkShowTimeStamp_CheckedChanged(object sender, EventArgs e)
         {
             diagnosticsTextBox1.ShowTimeStamp = chkShowTimeStamp.Checked;
+            diagnosticsRichTextBox1.ShowTimeStamp = chkShowTimeStamp.Checked;
             propertyGrid2.Refresh();
         }
 

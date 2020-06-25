@@ -49,12 +49,19 @@
     <Compile Include="Classes\TraceFileWriter.cs" />
     <Compile Include="Classes\TraceLogger.cs" />
     <Compile Include="Classes\TraceTimeStampStyle.cs" />
+    <Compile Include="Controls\DiagnosticsRichTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\DiagnosticsTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\TextEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Controls\DiagnosticsRichTextBox.resx">
+      <DependentUpon>DiagnosticsRichTextBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\DiagnosticsTextBox.resx">
       <DependentUpon>DiagnosticsTextBox.cs</DependentUpon>
     </EmbeddedResource>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
@@ -9,7 +10,7 @@ namespace CodeArtEng.Diagnostics.Controls
     /// <summary>
     /// Textbox with TraceListener
     /// </summary>
-    public class DiagnosticsTextBox : TextBox
+    public class DiagnosticsRichTextBox : RichTextBox
     {
         private static readonly object LockObject = new object();
         string MessageBuffer;
@@ -42,14 +43,14 @@ namespace CodeArtEng.Diagnostics.Controls
         /// <summary>
         /// Initializes a new instance of the <see cref="DiagnosticsTextBox"/> class.
         /// </summary>
-        public DiagnosticsTextBox()
+        public DiagnosticsRichTextBox()
         {
             InitializeComponent();
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true); //Double Buffer
 
             //Default control property
             base.Multiline = true;
-            ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Both;
             DisplayBufferSize = 0;
 
             base.ReadOnly = true;
@@ -207,7 +208,7 @@ namespace CodeArtEng.Diagnostics.Controls
         private void Tracer_OnMessageReceived(ref string message)
         {
             //Message filter implementation. 
-            if(MessageReceived != null)
+            if (MessageReceived != null)
             {
                 TextEventArgs eArg = new TextEventArgs() { Message = message };
                 MessageReceived.Invoke(this, eArg);
@@ -230,9 +231,7 @@ namespace CodeArtEng.Diagnostics.Controls
                 Invoke(delFunction, new object[] { message });
                 return;
             }
-
-            //this.AppendText(message);
-            this.Text += message;
+            this.AppendText(message);
         }
 
         private void InitializeComponent()
@@ -297,10 +296,11 @@ namespace CodeArtEng.Diagnostics.Controls
             this.refreshTimer.Interval = 50;
             this.refreshTimer.Tick += new System.EventHandler(this.refreshTimer_Tick);
             // 
-            // DiagnosticsTextBox
+            // DiagnosticsRichTextBox
             // 
             this.ContextMenuStrip = this.contextMenuStrip1;
             this.WordWrap = false;
+            this.TextChanged += new System.EventHandler(this.DiagnosticsRichTextBox_TextChanged);
             this.VisibleChanged += new System.EventHandler(this.DiagnosticsTextBox_VisibleChanged);
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -362,9 +362,9 @@ namespace CodeArtEng.Diagnostics.Controls
                     string[] data = new string[DisplayBufferSize];
                     Array.Copy(Lines, Lines.Length - DisplayBufferSize, data, 0, DisplayBufferSize);
                     Lines = data;
+                    LastSelection = 0;
+                    FormatText();
                 }
-                SelectionStart = Text.Length;
-                ScrollToCaret();
             }
 
         }
@@ -424,6 +424,82 @@ namespace CodeArtEng.Diagnostics.Controls
         {
             OutputFileWriter.ListenerEnabled = (ListenerEnabled && _WriteToFile);
         }
+
+        private int LastSelection = 0;
+
+        private void DiagnosticsRichTextBox_TextChanged(object sender, EventArgs e)
+        {
+            FormatText();
+        }
+
+        #region [ Syntax Highlighting ]
+
+        private Dictionary<string, Color> SyntaxTable = new Dictionary<string, Color>();
+
+        /// <summary>
+        /// Add formatting rule to set font color based on matching string.
+        /// </summary>
+        /// <param name="containString"></param>
+        /// <param name="color"></param>
+        public void AddFormattingRule(string containString, Color color)
+        {
+            if (SyntaxTable.ContainsKey(containString)) return;
+            SyntaxTable.Add(containString, color);
+        }
+
+        /// <summary>
+        /// Clear all formatting rule
+        /// </summary>
+        public void ClearFormattingRule() { SyntaxTable.Clear(); }
+
+        /// <summary>
+        /// When enabled, reset format to default font color for next line if no matching found. 
+        /// Otherwise, apply last font color.
+        /// </summary>
+        [Category("Trace Listener")]
+        [DisplayName("Auto Reset Format")]
+        [Description("When enabled, reset format to default font color for next line if no matching found. Otherwise, apply last font color. Use AddFormattingRule() to define font color rule.")]
+        [DefaultValue(true)]
+        public bool AutoResetFormat { get; set; } = true;
+        private Color LastFontColor = DefaultForeColor;
+
+        private bool Updating = false;
+        private void FormatText()
+        {
+            if (Updating) return;
+
+            Updating = true;
+            try
+            {
+                int startLine = GetLineFromCharIndex(LastSelection);
+                for (int x = startLine; x < Lines.Length; x++)
+                {
+                    int lineStart = GetFirstCharIndexFromLine(x);
+                    int lineEnd = GetFirstCharIndexFromLine(x + 1) - 1;
+                    SelectionStart = lineStart; SelectionLength = lineEnd < 0 ? 0 : lineEnd - lineStart + 1;
+
+                    if (AutoResetFormat)
+                        SelectionColor = LastFontColor = ForeColor;
+                    else
+                        SelectionColor = LastFontColor;
+
+                    foreach (KeyValuePair<string, Color> entry in SyntaxTable)
+                    {
+                        if (Lines[x].Contains(entry.Key))
+                        {
+                            SelectionColor = LastFontColor = entry.Value;
+                            break;
+                        }
+                    }
+                }
+                SelectionStart = LastSelection = Text.Length;
+                ScrollToCaret();
+            }
+            finally { Updating = false; }
+        }
+
+        #endregion
     }
+
 
 }
