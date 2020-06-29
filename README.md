@@ -1,4 +1,4 @@
-# CodeArtEng.Diagnostics
+# CodeArtEng.Diagnostics ![Nuget](https://img.shields.io/nuget/v/CodeArtEng.Diagnostics)
 ## Diagnostics Toolbox
 
 Diagnostics text box is a .NET WinForm Control written in C# derived from <code>System.Windows.Forms.TextBox</code> 
