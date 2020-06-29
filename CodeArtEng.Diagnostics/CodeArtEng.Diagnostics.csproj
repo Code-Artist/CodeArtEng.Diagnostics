@@ -49,6 +49,7 @@
     <Compile Include="Classes\TraceFileWriter.cs" />
     <Compile Include="Classes\TraceLogger.cs" />
     <Compile Include="Classes\TraceTimeStampStyle.cs" />
+    <Compile Include="Classes\Utility.cs" />
     <Compile Include="Controls\DiagnosticsRichTextBox.cs">
       <SubType>Component</SubType>
     </Compile>

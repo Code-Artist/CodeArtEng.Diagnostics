@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -33,6 +34,20 @@ namespace CodeArtEng.Diagnostics.Tests
             Assert.IsFalse(executor.HasExited);
             executor.Abort();
             Assert.IsTrue(executor.HasExited);
+        }
+
+        [Test]
+        public void ExceuteProcessAsAdmin()
+        {
+            string appPath = Path.GetDirectoryName(System.Reflection.Assembly.GetCallingAssembly().Location);
+            appPath = Path.GetFullPath(Path.Combine(appPath, "./../../../IsAdminCheck/bin/Debug/IsAdminCheck.exe"));
+            ProcessExecutor executor = new ProcessExecutor();
+            executor.ShowConsoleWindow = true;
+            executor.Application = appPath;
+            executor.RunAsAdministrator = true;
+            ProcessResult result = executor.Execute(true);
+            Assert.IsTrue(executor.HasExited);
+            Assert.AreEqual(0, result.ExitCode);
         }
     }
 }

@@ -221,20 +221,6 @@ namespace CodeArtEng.Diagnostics.Controls
         [DisplayName("MessageReceived")]
         public event EventHandler<TextEventArgs> MessageReceived;
 
-        private delegate void WriteDelegate(string message);
-        private void HandleWriteEvent(string message)
-        {
-            if (InvokeRequired)
-            {
-                WriteDelegate delFunction = new WriteDelegate(HandleWriteEvent);
-                Invoke(delFunction, new object[] { message });
-                return;
-            }
-
-            //this.AppendText(message);
-            this.Text += message;
-        }
-
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();

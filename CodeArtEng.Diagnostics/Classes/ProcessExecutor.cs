@@ -106,6 +106,14 @@ namespace CodeArtEng.Diagnostics
         public bool ShowConsoleWindow { get; set; }
 
         /// <summary>
+        /// Run as Administrator using verb = 'RunAs'
+        /// </summary>
+        [Category("Security")]
+        [Description("Run as Administrator using verb = 'RunAs'. ShowConsoleWindow property must be True.")]
+        [DefaultValue(false)]
+        public bool RunAsAdministrator { get; set; } = false;
+
+        /// <summary>
         /// Get Process Handler for current execution. Return null if execution completed.
         /// </summary>
         [Browsable(false)]
@@ -205,6 +213,7 @@ namespace CodeArtEng.Diagnostics
                 processInfo.RedirectStandardOutput = !ShowConsoleWindow;
                 processInfo.RedirectStandardError = !ShowConsoleWindow;
                 processInfo.RedirectStandardInput = RedirectStandardInput;
+                if (RunAsAdministrator) processInfo.Verb = "runas";
                 if (!string.IsNullOrEmpty(UserName))
                 {
                     processInfo.UserName = UserName;
