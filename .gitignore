@@ -222,3 +222,5 @@ Documentation/CodeArtEng.Diagnostics.shfbproj_Admin
 Documentation/CodeArtEng.Diagnostics.shfbproj_Admin
 Documentation/CodeArtEng.Diagnostics.xlsx
 .hgtags
+Output/NormalLog.txt
+Output/RecoveryLog.txt

@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Classes\CodeProfiler.cs" />
     <Compile Include="Classes\ProcessExecutor.cs" />
+    <Compile Include="Classes\TextBoxThemeManager.cs" />
     <Compile Include="Classes\TraceFileWriter.cs" />
     <Compile Include="Classes\TraceLogger.cs" />
     <Compile Include="Classes\TraceTimeStampStyle.cs" />

@@ -220,8 +220,11 @@ namespace CodeArtEng.Diagnostics
                     processInfo.Password = ssPwd;
                     processInfo.Domain = DomainName;
                 }
-                Trace.WriteLine(Name + ": Executing: " + processInfo.FileName + " " + processInfo.Arguments +
-                    (string.IsNullOrEmpty(processInfo.UserName) ? "" : " as " + processInfo.Domain + "\\" + processInfo.UserName));
+                if (TraceLogEnabled)
+                {
+                    Trace.WriteLine(Name + ": Executing: " + processInfo.FileName + " " + processInfo.Arguments +
+                        (string.IsNullOrEmpty(processInfo.UserName) ? "" : " as " + processInfo.Domain + "\\" + processInfo.UserName));
+                }
                 if (ProcessHandler != null) DisposeProcessHandler();
                 ProcessHandler = Process.Start(processInfo);
                 if (!ShowConsoleWindow)
@@ -251,7 +254,7 @@ namespace CodeArtEng.Diagnostics
                 result.Output = new string[] { ex.Message.ToString() };
                 result.ErrorDetected = true;
                 result.ExitCode = -999;
-                Trace.WriteLine(Name + ": Exception Raised (-999): " + ex.Message);
+                if(TraceLogEnabled) Trace.WriteLine(Name + ": Exception Raised (-999): " + ex.Message);
                 return result;
             }
 

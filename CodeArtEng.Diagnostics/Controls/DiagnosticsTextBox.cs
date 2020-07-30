@@ -95,6 +95,15 @@ namespace CodeArtEng.Diagnostics.Controls
         private new bool Multiline { get; set; } = true;
         #endregion
 
+        private TextBoxTheme ThemeValue = TextBoxTheme.Windows;
+        /// <summary>
+        /// Get or set Diagnostic TextBox Theme. <see cref="TextBoxTheme"/>
+        /// </summary>
+        [Category("Appearance")]
+        [DefaultValue(typeof(TextBoxTheme), "Windows")]
+        [Description("Get or set Diagnostic TextBox Theme.")]
+        public TextBoxTheme Theme { get => ThemeValue; set => ThemeValue = this.SetTheme(value); }
+
         /// <summary>
         /// Enable / Disable trace listener to capture message from trace source.
         /// </summary>

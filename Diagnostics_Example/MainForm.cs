@@ -165,5 +165,6 @@ namespace Diagnostics_Example
             CodeProfiler.Stop("Test Timer 1");
             CodeProfiler.Stop("Test Timer 2");
         }
+
     }
 }
