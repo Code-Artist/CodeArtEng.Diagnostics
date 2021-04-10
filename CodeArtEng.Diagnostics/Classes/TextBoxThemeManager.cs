@@ -15,6 +15,10 @@ namespace CodeArtEng.Diagnostics
     public enum TextBoxTheme
     {
         /// <summary>
+        /// User Custom Style
+        /// </summary>
+        UserDefined,
+        /// <summary>
         /// Default Winform Style
         /// </summary>
         Windows,
@@ -29,7 +33,15 @@ namespace CodeArtEng.Diagnostics
         /// <summary>
         /// Power shell stype, blue background, white text.
         /// </summary>
-        PowerShell
+        PowerShell,
+        /// <summary>
+        /// Visual studio dark theme with green text
+        /// </summary>
+        VisualStudio_Green,
+        /// <summary>
+        /// Visual studio dark theme with blue text
+        /// </summary>
+        VisualStudio_Blue
     }
 
     internal static class TextBoxThemeManager
@@ -53,6 +65,18 @@ namespace CodeArtEng.Diagnostics
                 case TextBoxTheme.PowerShell:
                     sender.ForeColor = Color.White;
                     sender.BackColor = Color.FromArgb(1,36,86);
+                    sender.Font = new Font("Consolas", sender.Font.SizeInPoints, FontStyle.Regular);
+                    break;
+
+                case TextBoxTheme.VisualStudio_Blue:
+                    sender.ForeColor = Color.FromArgb(86, 156, 214);
+                    sender.BackColor = Color.FromArgb(30, 30, 30);
+                    sender.Font = new Font("Consolas", sender.Font.SizeInPoints, FontStyle.Regular);
+                    break;
+
+                case TextBoxTheme.VisualStudio_Green:
+                    sender.ForeColor = Color.FromArgb(134, 198, 145);
+                    sender.BackColor = Color.FromArgb(30, 30, 30);
                     sender.Font = new Font("Consolas", sender.Font.SizeInPoints, FontStyle.Regular);
                     break;
 

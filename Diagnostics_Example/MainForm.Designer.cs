@@ -48,7 +48,12 @@
             this.BtProfilerTest = new System.Windows.Forms.Button();
             this.diagnosticsRichTextBox1 = new CodeArtEng.Diagnostics.Controls.DiagnosticsRichTextBox();
             this.diagnosticsTextBox1 = new CodeArtEng.Diagnostics.Controls.DiagnosticsTextBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.BtStartAsAdmin = new System.Windows.Forms.Button();
+            this.txtAdminStartArg = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.gpTerminal.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // chkListenerEnabled
@@ -224,8 +229,10 @@
             // 
             // diagnosticsRichTextBox1
             // 
+            this.diagnosticsRichTextBox1.BackColor = System.Drawing.SystemColors.Window;
             this.diagnosticsRichTextBox1.FlushEnabled = false;
-            this.diagnosticsRichTextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.diagnosticsRichTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.diagnosticsRichTextBox1.ForeColor = System.Drawing.SystemColors.WindowText;
             this.diagnosticsRichTextBox1.ListenerEnabled = false;
             this.diagnosticsRichTextBox1.Location = new System.Drawing.Point(977, 12);
             this.diagnosticsRichTextBox1.Name = "diagnosticsRichTextBox1";
@@ -253,11 +260,51 @@
             this.diagnosticsTextBox1.WriteToFile = true;
             this.diagnosticsTextBox1.MessageReceived += new System.EventHandler<CodeArtEng.Diagnostics.Controls.TextEventArgs>(this.diagnosticsTextBox1_MessageReceived);
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.BtStartAsAdmin);
+            this.groupBox1.Controls.Add(this.txtAdminStartArg);
+            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Location = new System.Drawing.Point(12, 401);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(534, 71);
+            this.groupBox1.TabIndex = 17;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Run As Admin";
+            // 
+            // BtStartAsAdmin
+            // 
+            this.BtStartAsAdmin.Location = new System.Drawing.Point(64, 39);
+            this.BtStartAsAdmin.Name = "BtStartAsAdmin";
+            this.BtStartAsAdmin.Size = new System.Drawing.Size(148, 23);
+            this.BtStartAsAdmin.TabIndex = 2;
+            this.BtStartAsAdmin.Text = "Start As Admin";
+            this.BtStartAsAdmin.UseVisualStyleBackColor = true;
+            this.BtStartAsAdmin.Click += new System.EventHandler(this.BtStartAsAdmin_Click);
+            // 
+            // txtAdminStartArg
+            // 
+            this.txtAdminStartArg.Location = new System.Drawing.Point(64, 16);
+            this.txtAdminStartArg.Name = "txtAdminStartArg";
+            this.txtAdminStartArg.Size = new System.Drawing.Size(288, 20);
+            this.txtAdminStartArg.TabIndex = 1;
+            this.txtAdminStartArg.Text = "Command Arg in Admin Mode";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 20);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(52, 13);
+            this.label3.TabIndex = 0;
+            this.label3.Text = "Argument";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1507, 477);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.diagnosticsRichTextBox1);
             this.Controls.Add(this.BtProfilerTest);
             this.Controls.Add(this.gpTerminal);
@@ -278,6 +325,8 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.gpTerminal.ResumeLayout(false);
             this.gpTerminal.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -304,6 +353,10 @@
         private System.Windows.Forms.TextBox txtTerminalCmd;
         private System.Windows.Forms.Button BtProfilerTest;
         private CodeArtEng.Diagnostics.Controls.DiagnosticsRichTextBox diagnosticsRichTextBox1;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Button BtStartAsAdmin;
+        private System.Windows.Forms.TextBox txtAdminStartArg;
+        private System.Windows.Forms.Label label3;
     }
 }
 

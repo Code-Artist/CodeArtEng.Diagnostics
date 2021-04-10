@@ -13,8 +13,15 @@ namespace IsAdminCheck
             try
             {
                 Console.WriteLine("Admin=" + CodeArtEng.Diagnostics.Utility.IsRunAsAdmin().ToString());
-                if (CodeArtEng.Diagnostics.Utility.IsRunAsAdmin()) Environment.Exit(0);
-                else Environment.Exit(1);
+                if (CodeArtEng.Diagnostics.Utility.IsRunAsAdmin())
+                {
+                    Console.WriteLine("Application in admin mode!");
+                    Console.WriteLine("Arguments = " + string.Join(" ", Environment.GetCommandLineArgs().Skip(1)));
+                    System.Threading.Thread.Sleep(2000);
+                    Environment.Exit(0);
+                }
+                //else Environment.Exit(1);
+                else CodeArtEng.Diagnostics.Utility.RestartApplicationAsAdmin("Custom Arguments" );
             }
             catch (Exception ex)
             {

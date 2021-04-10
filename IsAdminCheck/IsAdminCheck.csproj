@@ -43,14 +43,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\CodeArtEng.Diagnostics\Classes\Utility.cs">
-      <Link>Utility.cs</Link>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CodeArtEng.Diagnostics\CodeArtEng.Diagnostics.csproj">
+      <Project>{14e4f0b2-0b87-426b-9297-68c86a657ca8}</Project>
+      <Name>CodeArtEng.Diagnostics</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

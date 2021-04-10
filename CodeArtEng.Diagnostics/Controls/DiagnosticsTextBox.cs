@@ -95,6 +95,39 @@ namespace CodeArtEng.Diagnostics.Controls
         private new bool Multiline { get; set; } = true;
         #endregion
 
+        #region [ Theme ]
+
+        /// <summary>
+        /// Fore Color changed event handler
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnForeColorChanged(EventArgs e)
+        {
+            if (!UpdatingTheme) ThemeValue = TextBoxTheme.UserDefined;
+            base.OnForeColorChanged(e);
+        }
+
+        /// <summary>
+        /// Back Color changed event handler
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnBackColorChanged(EventArgs e)
+        {
+            if (!UpdatingTheme) ThemeValue = TextBoxTheme.UserDefined;
+            base.OnBackColorChanged(e);
+        }
+
+        /// <summary>
+        /// Font changed event handler.
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnFontChanged(EventArgs e)
+        {
+            if (!UpdatingTheme) ThemeValue = TextBoxTheme.UserDefined;
+            base.OnFontChanged(e);
+        }
+
+        private bool UpdatingTheme = false;
         private TextBoxTheme ThemeValue = TextBoxTheme.Windows;
         /// <summary>
         /// Get or set Diagnostic TextBox Theme. <see cref="TextBoxTheme"/>
@@ -102,7 +135,17 @@ namespace CodeArtEng.Diagnostics.Controls
         [Category("Appearance")]
         [DefaultValue(typeof(TextBoxTheme), "Windows")]
         [Description("Get or set Diagnostic TextBox Theme.")]
-        public TextBoxTheme Theme { get => ThemeValue; set => ThemeValue = this.SetTheme(value); }
+        public TextBoxTheme Theme
+        {
+            get => ThemeValue; set
+            {
+                UpdatingTheme = true;
+                try { ThemeValue = this.SetTheme(value); }
+                finally { UpdatingTheme = false; }
+            }
+        }
+
+        #endregion
 
         /// <summary>
         /// Enable / Disable trace listener to capture message from trace source.
@@ -216,7 +259,7 @@ namespace CodeArtEng.Diagnostics.Controls
         private void Tracer_OnMessageReceived(ref string message)
         {
             //Message filter implementation. 
-            if(MessageReceived != null)
+            if (MessageReceived != null)
             {
                 TextEventArgs eArg = new TextEventArgs() { Message = message };
                 MessageReceived.Invoke(this, eArg);

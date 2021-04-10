@@ -31,11 +31,20 @@ namespace Diagnostics_Example
             procExecutor.TraceLogEnabled = true;
             propertyGrid1.SelectedObject = procExecutor;
             propertyGrid2.SelectedObject = diagnosticsRichTextBox1;
+            procExecutor.Exited += ProcExecutor_Exited;
 
             diagnosticsRichTextBox1.AddFormattingRule("Thread", Color.Blue);
             diagnosticsRichTextBox1.AddFormattingRule("Line 10", Color.Blue);
             diagnosticsRichTextBox1.AddFormattingRule("Trace Message 9", Color.Red);
 
+            Trace.WriteLine("Admin Mode = " + Utility.IsRunAsAdmin());
+            Trace.WriteLine("Startup Arguments = " + string.Join(" ", Environment.GetCommandLineArgs().Skip(1)));
+
+        }
+
+        private void ProcExecutor_Exited(object sender, ProcessResult e)
+        {
+            Trace.WriteLine(string.Join("\n", e.Output));
         }
 
         private void chkListenerEnabled_CheckedChanged(object sender, EventArgs e)
@@ -166,5 +175,9 @@ namespace Diagnostics_Example
             CodeProfiler.Stop("Test Timer 2");
         }
 
+        private void BtStartAsAdmin_Click(object sender, EventArgs e)
+        {
+            CodeArtEng.Diagnostics.Utility.RestartApplicationAsAdmin(txtAdminStartArg.Text);
+        }
     }
 }

@@ -414,7 +414,8 @@ namespace CodeArtEng.Diagnostics
                   new ProcessResult()
                   {
                       ExitCode = ProcessHandler.ExitCode,
-                      ErrorDetected = errorDetected
+                      ErrorDetected = errorDetected,
+                      Output = outputData.ToArray()
                   };
 
                 handler(this, procResult);
