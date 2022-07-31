@@ -103,7 +103,7 @@ namespace CodeArtEng.Diagnostics
         [Category("Display")]
         [Description("Show console window.")]
         [DefaultValue(false)]
-        public bool ShowConsoleWindow { get; set; }
+        public bool ShowConsoleWindow { get; set; } = false;
 
         /// <summary>
         /// Run as Administrator using verb = 'RunAs'

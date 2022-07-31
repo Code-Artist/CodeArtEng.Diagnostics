@@ -40,7 +40,14 @@ namespace CodeArtEng.Diagnostics.Tests
         public void ExceuteProcessAsAdmin()
         {
             string appPath = Path.GetDirectoryName(System.Reflection.Assembly.GetCallingAssembly().Location);
-            appPath = Path.GetFullPath(Path.Combine(appPath, "./../../../IsAdminCheck/bin/Debug/IsAdminCheck.exe"));
+#if NET45
+            appPath = Path.GetFullPath(Path.Combine(appPath, "./../../../../IsAdminCheck/bin/Debug/net45/IsAdminCheck.exe"));
+#endif
+
+#if NETCOREAPP
+            appPath = Path.GetFullPath(Path.Combine(appPath, "./../../../../IsAdminCheck/bin/Debug/netcoreapp3.1/IsAdminCheck.exe"));
+#endif
+
             ProcessExecutor executor = new ProcessExecutor();
             executor.ShowConsoleWindow = true;
             executor.Application = appPath;

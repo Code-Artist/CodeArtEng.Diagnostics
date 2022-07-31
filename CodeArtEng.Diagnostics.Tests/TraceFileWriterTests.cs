@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-
 //ToDo: Review Test Cases
 
 namespace CodeArtEng.Diagnostics.Tests

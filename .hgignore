@@ -6,3 +6,4 @@ obj
 .git*
 .vs
 packages
+*.user
