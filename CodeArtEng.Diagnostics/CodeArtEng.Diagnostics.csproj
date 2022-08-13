@@ -1,39 +1,90 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <TargetFrameworks>net45;netcoreapp3.1;net6.0-Windows;net5.0-windows</TargetFrameworks>
-    <AssemblyName>CodeArtEng.Diagnostics</AssemblyName>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{14E4F0B2-0B87-426B-9297-68C86A657CA8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CodeArtEng.Diagnostics</RootNamespace>
-    <UseWindowsForms>True</UseWindowsForms>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Authors>Code Artist</Authors>
-    <Version>4.0.2</Version>
-    <Company>Code Art Engineering</Company>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/Code-Artist/CodeArtEng.Diagnostics</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/Code-Artist/CodeArtEng.Diagnostics</RepositoryUrl>
-    <RepositoryType>GitHub</RepositoryType>
-    <Copyright>Copyright © CodeArtEng 2021</Copyright>
-    <PackageReleaseNotes>Added .NET Core 3.1, .NET5.0 and .NET 6.0 (Preview) support.</PackageReleaseNotes>
-    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
-    <Description>Windows Form Diagnostics Tools</Description>
-    <PackageTags>C#, WinForms</PackageTags>
-    <PackageIcon>CAELogoSmall.png</PackageIcon>
+    <AssemblyName>CodeArtEng.Diagnostics</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
-
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\CodeArtEng.Diagnostics.XML</DocumentationFile>
+    <CodeAnalysisRuleSet>CodeArtEng.Diagnostics.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\CodeArtEng.Diagnostics.XML</DocumentationFile>
+    <CodeAnalysisRuleSet>CodeArtEng.Diagnostics.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="System.Management" Version="5.0.0" Condition="'$(TargetFramework)' != 'net45'" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
-
   <ItemGroup>
-    <Reference Include="System.Management" Condition="'$(TargetFramework)' == 'net45'" />
+    <Compile Include="Classes\CodeProfiler.cs" />
+    <Compile Include="Classes\ProcessExecutor.cs" />
+    <Compile Include="Classes\TextBoxThemeManager.cs" />
+    <Compile Include="Classes\TraceFileWriter.cs" />
+    <Compile Include="Classes\TraceLogger.cs" />
+    <Compile Include="Classes\TraceTimeStampStyle.cs" />
+    <Compile Include="Classes\Utility.cs" />
+    <Compile Include="Controls\DiagnosticsRichTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\DiagnosticsTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\TextEventArgs.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-
   <ItemGroup>
-    <None Include="..\..\..\..\..\Projects\CodeArtEng\03 Art\Icons\CAELogoSmall.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
+    <EmbeddedResource Include="Controls\DiagnosticsRichTextBox.resx">
+      <DependentUpon>DiagnosticsRichTextBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DiagnosticsTextBox.resx">
+      <DependentUpon>DiagnosticsTextBox.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
-
+  <ItemGroup>
+    <None Include="CodeArtEng.Diagnostics.ruleset" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\NuPack.3.4.2\build\NuPack.targets" Condition="Exists('..\packages\NuPack.3.4.2\build\NuPack.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\NuPack.3.4.2\build\NuPack.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NuPack.3.4.2\build\NuPack.targets'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
 </Project>

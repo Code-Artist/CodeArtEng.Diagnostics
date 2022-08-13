@@ -33,7 +33,8 @@ namespace CodeArtEng.Diagnostics
         /// Restart application in adminstrator mode
         /// </summary>
         /// <param name="arguments">Command line argument for restart instance. Leave blank to use current startup arguments</param>
-        public static void RestartApplicationAsAdmin(string arguments = null)
+        /// <param name="terminateApplication">Terminate current application using Environment.Exit(0). Enabled by default.</param>
+        public static void RestartApplicationAsAdmin(string arguments = null, bool terminateApplication = true)
         {
             ProcessExecutor executor = new ProcessExecutor();
             executor.RunAsAdministrator = true;
@@ -45,7 +46,7 @@ namespace CodeArtEng.Diagnostics
             else executor.Arguments = arguments;
             executor.ShowConsoleWindow = true;
             executor.Execute(false);
-            Environment.Exit(0);
+            if (terminateApplication) Environment.Exit(0);
         }
 
     }

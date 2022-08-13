@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <TargetFrameworks>net48;net6.0-Windows</TargetFrameworks>
+    <AssemblyName>CodeArtEng.Diagnostics</AssemblyName>
+    <RootNamespace>CodeArtEng.Diagnostics</RootNamespace>
+    <UseWindowsForms>True</UseWindowsForms>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Code Artist</Authors>
+    <Version>4.1.0</Version>
+    <Company>Code Art Engineering</Company>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/Code-Artist/CodeArtEng.Diagnostics</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Code-Artist/CodeArtEng.Diagnostics</RepositoryUrl>
+    <RepositoryType>GitHub</RepositoryType>
+    <Copyright>Copyright © CodeArtEng 2022</Copyright>
+    <PackageReleaseNotes>Upgraded to .NET 4.9 and .NET Core 6.0</PackageReleaseNotes>
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+    <Description>Windows Form Diagnostics Tools</Description>
+    <PackageTags>C#, WinForms</PackageTags>
+    <PackageIcon>CAELogoSmall.png</PackageIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Management" Version="5.0.0" Condition="'$(TargetFramework)' != 'net45'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Management" Condition="'$(TargetFramework)' == 'net45'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\..\..\Projects\CodeArtEng\03 Art\Icons\CAELogoSmall.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>
