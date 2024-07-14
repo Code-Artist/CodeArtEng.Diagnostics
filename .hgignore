@@ -7,3 +7,5 @@ obj
 .vs
 packages
 *.user
+Backup/*.txt
+Output/*.txt

@@ -14,7 +14,7 @@
     <RepositoryUrl>https://github.com/Code-Artist/CodeArtEng.Diagnostics</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
     <Copyright>Copyright © CodeArtEng 2022</Copyright>
-    <PackageReleaseNotes>Upgraded to .NET 4.9 and .NET Core 6.0</PackageReleaseNotes>
+    <PackageReleaseNotes>Upgraded to .NET 4.8 and .NET Core 6.0</PackageReleaseNotes>
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <Description>Windows Form Diagnostics Tools</Description>
     <PackageTags>C#, WinForms</PackageTags>
