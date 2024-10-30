@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -29,10 +29,10 @@ namespace CodeArtEng.Diagnostics.Tests
             TraceFileWriter traceWriter = SetupTraceFileWritter("./Output/NormalLog.txt", "./Backup/NormalLog.txt");
             traceWriter.ListenerEnabled = true;
             WriteTestStrings(1, 100);
-            Assert.AreEqual(TraceFileWriterMode.Normal, traceWriter.OperationMode);
+            Assert.That(traceWriter.OperationMode,Is.EqualTo(TraceFileWriterMode.Normal));
             traceWriter.ListenerEnabled = false;
-            Assert.AreEqual(100, File.ReadAllLines(OutputFile).Count());
-            Assert.IsFalse(File.Exists(traceWriter.BackupOutputFile));
+            Assert.That(File.ReadAllLines(OutputFile).Count(),Is.EqualTo(100));
+            Assert.That(File.Exists(traceWriter.BackupOutputFile),Is.False);
 
         }
 
@@ -58,9 +58,9 @@ namespace CodeArtEng.Diagnostics.Tests
             TraceFileWriter traceWriter = SetupTraceFileWritter(OutputFileInvalid, "./Backup/BackupLog.txt");
             traceWriter.ListenerEnabled = true;
             WriteTestStrings(1, 200);
-            Assert.AreEqual(TraceFileWriterMode.Backup, traceWriter.OperationMode);
+            Assert.That(traceWriter.OperationMode,Is.EqualTo(TraceFileWriterMode.Backup));
             traceWriter.ListenerEnabled = false;
-            Assert.AreEqual(200, File.ReadAllLines(BackupFile).Count());
+            Assert.That(File.ReadAllLines(BackupFile).Count(),Is.EqualTo(200));
         }
 
         [Test]
@@ -71,7 +71,7 @@ namespace CodeArtEng.Diagnostics.Tests
             traceWriter.BackupOutputFile = OutputFileInvalid;
             traceWriter.ListenerEnabled = true;
             Trace.WriteLine("Testing");
-            Assert.AreEqual(TraceFileWriterMode.Disabled, traceWriter.OperationMode);
+            Assert.That(traceWriter.OperationMode,Is.EqualTo(TraceFileWriterMode.Disabled));
         }
 
         [Test]
@@ -85,22 +85,22 @@ namespace CodeArtEng.Diagnostics.Tests
             
             //Normal Mode
             WriteTestStrings(1, 1000);
-            Assert.AreEqual(TraceFileWriterMode.Normal, traceWriter.OperationMode);
+            Assert.That(traceWriter.OperationMode,Is.EqualTo(TraceFileWriterMode.Normal));
 
             //Backup Mode
             traceWriter.OutputFile = OutputFileInvalid;
             WriteTestStrings(1001, 2000, "Backup Mode");
-            Assert.AreEqual(TraceFileWriterMode.Backup, traceWriter.OperationMode);
+            Assert.That(traceWriter.OperationMode,Is.EqualTo(TraceFileWriterMode.Backup));
 
             //Recovery Mode
             traceWriter.OutputFile = recoveryOutputFile;
             WriteTestStrings(2001, 3000);
-            Assert.AreEqual(TraceFileWriterMode.Normal, traceWriter.OperationMode);
+            Assert.That(traceWriter.OperationMode,Is.EqualTo(TraceFileWriterMode.Normal));
 
             traceWriter.ListenerEnabled = false;
             traceWriter.ShowTimeStamp = false;
 
-            Assert.AreEqual(3000, File.ReadAllLines(OutputFile).Count());
+            Assert.That(File.ReadAllLines(OutputFile).Count(),Is.EqualTo(3000));
         }
     }
 }

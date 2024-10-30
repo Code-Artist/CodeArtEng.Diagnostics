@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>CodeArtEng.Diagnostics</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\CodeArtEng.Diagnostics\Classes\CodeProfiler.cs" Link="CodeProfiler.cs" />
+    <Compile Include="..\CodeArtEng.Diagnostics\Classes\ProcessExecutor.cs" Link="ProcessExecutor.cs" />
+    <Compile Include="..\CodeArtEng.Diagnostics\Classes\TraceFileWriter.cs" Link="TraceFileWriter.cs" />
+    <Compile Include="..\CodeArtEng.Diagnostics\Classes\TraceLogger.cs" Link="TraceLogger.cs" />
+    <Compile Include="..\CodeArtEng.Diagnostics\Classes\TraceTimeStampStyle.cs" Link="TraceTimeStampStyle.cs" />
+    <Compile Include="..\CodeArtEng.Diagnostics\Classes\Utility.cs" Link="Utility.cs" />
+    <Compile Include="..\CodeArtEng.Diagnostics\Controls\TextEventArgs.cs" Link="TextEventArgs.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Management" Version="8.0.0" />
+  </ItemGroup>
+
+</Project>

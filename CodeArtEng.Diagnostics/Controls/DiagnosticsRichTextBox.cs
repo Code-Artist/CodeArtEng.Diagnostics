@@ -13,7 +13,7 @@ namespace CodeArtEng.Diagnostics.Controls
     public class DiagnosticsRichTextBox : RichTextBox
     {
         private static readonly object LockObject = new object();
-        string MessageBuffer;
+        private string MessageBuffer;
 
         private ContextMenuStrip contextMenuStrip1;
         private IContainer components;

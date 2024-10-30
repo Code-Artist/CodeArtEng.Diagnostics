@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +19,7 @@ namespace CodeArtEng.Diagnostics.Tests
             executor.Application = "cmd.exe";
             executor.Arguments = "/c echo Test";
             ProcessResult result = executor.Execute();
-            Assert.AreEqual(0, result.ExitCode);
+            Assert.That(result.ExitCode,Is.EqualTo(0));
         }
 
         [Test]
@@ -31,16 +31,16 @@ namespace CodeArtEng.Diagnostics.Tests
             //executor.Arguments = "/k timeout 50";
             ProcessResult result = executor.Execute(false);
             System.Threading.Thread.Sleep(1000);
-            Assert.IsFalse(executor.HasExited);
+            Assert.That(executor.HasExited,Is.False);
             executor.Abort();
-            Assert.IsTrue(executor.HasExited);
+            Assert.That(executor.HasExited,Is.True);
         }
 
         [Test]
         public void ExceuteProcessAsAdmin()
         {
             string appPath = Path.GetDirectoryName(System.Reflection.Assembly.GetCallingAssembly().Location);
-#if NET48
+#if NET48 || NET8_0
             appPath = Path.GetFullPath(Path.Combine(appPath, "./../../../../IsAdminCheck/bin/Debug/net48/IsAdminCheck.exe"));
 #endif
 
@@ -53,8 +53,8 @@ namespace CodeArtEng.Diagnostics.Tests
             executor.Application = appPath;
             executor.RunAsAdministrator = true;
             ProcessResult result = executor.Execute(true);
-            Assert.IsTrue(executor.HasExited);
-            Assert.AreEqual(0, result.ExitCode);
+            Assert.That(executor.HasExited,Is.True);
+            Assert.That(result.ExitCode,Is.EqualTo(0));
         }
     }
 }
