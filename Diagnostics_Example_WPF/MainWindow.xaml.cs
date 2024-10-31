@@ -84,10 +84,5 @@ namespace Diagnostics_Example_WPF
                 ((Button)sender).IsEnabled = true;
             }
         }
-
-        private void Button_Click_3(object sender, RoutedEventArgs e)
-        {
-            DiagTextBox.Foreground = new SolidColorBrush(Colors.Red);
-        }
     }
 }

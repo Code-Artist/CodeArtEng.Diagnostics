@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Diagnostics_Example_WPF"
         xmlns:Controls="clr-namespace:CodeArtEng.Diagnostics.Controls;assembly=CodeArtEng.Diagnostics.WPF" x:Class="Diagnostics_Example_WPF.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="829">
+        Title="MainWindow" Height="520" Width="829">
     <Grid>
         <Controls:DiagnosticsTextBox x:Name="DiagTextBox" HorizontalAlignment="Left" Height="216" Margin="10,10,0,0" Text="DiagnosticsTextBox" VerticalAlignment="Top" Width="434" DisplayBufferSize="100"/>
         <CheckBox Content="Start Listener" HorizontalAlignment="Left" Margin="449,10,0,0" VerticalAlignment="Top" IsChecked="{Binding ListenerEnabled, ElementName=DiagTextBox, Mode=TwoWay}"/>
@@ -17,6 +17,12 @@
         <ComboBox x:Name="CbTheme" HorizontalAlignment="Left" Margin="562,29,0,0" VerticalAlignment="Top" Width="120" SelectedItem="{Binding Theme, ElementName=DiagTextBox, Mode=TwoWay}"/>
         <Label Content="Theme" HorizontalAlignment="Left" Margin="562,7,0,0" VerticalAlignment="Top"/>
         <Button Content="Thread Write" HorizontalAlignment="Left" Height="30" Margin="449,166,0,0" VerticalAlignment="Top" Width="89" Click="Button_Click_2"/>
-        <Button Content="Button" HorizontalAlignment="Left" Height="56" Margin="449,201,0,0" VerticalAlignment="Top" Width="102"/>
+        <Controls:DiagnosticsRichTextBox Margin="10,231,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="247" Width="434">
+            <FlowDocument>
+                <Paragraph>
+                    <Run Text="DiagnosticsRichTextBox"/>
+                </Paragraph>
+            </FlowDocument>
+        </Controls:DiagnosticsRichTextBox>
     </Grid>
 </Window>

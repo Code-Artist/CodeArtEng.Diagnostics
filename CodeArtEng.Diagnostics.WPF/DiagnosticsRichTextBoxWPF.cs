@@ -1,15 +1,16 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics.SymbolStore;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Media;
+using System.Windows.Shapes;
 using System.Windows.Threading;
 using Microsoft.Win32;
 
 namespace CodeArtEng.Diagnostics.Controls
 {
-    /// <summary>
-    /// TextBox with TraceListener for WPF
-    /// </summary>
-    public class DiagnosticsTextBox : TextBox, INotifyPropertyChanged
+    public class DiagnosticsRichTextBox : RichTextBox, INotifyPropertyChanged
     {
         private static readonly object LockObject = new object();
         private string MessageBuffer;
@@ -27,7 +28,7 @@ namespace CodeArtEng.Diagnostics.Controls
         /// <summary>
         /// Cleanup resources
         /// </summary>
-        ~DiagnosticsTextBox()
+        ~DiagnosticsRichTextBox()
         {
             refreshTimer.IsEnabled = false;
             Tracer.Enabled = false;
@@ -36,16 +37,21 @@ namespace CodeArtEng.Diagnostics.Controls
         /// <summary>
         /// Initializes a new instance of the <see cref="DiagnosticsTextBox"/> class.
         /// </summary>
-        public DiagnosticsTextBox()
+        public DiagnosticsRichTextBox()
         {
             InitializeComponent();
 
             // Default control property
-            TextWrapping = TextWrapping.NoWrap;
+
+            //NOTE: WPF TextBox always wraps text in RichTextBox
+            //https://stackoverflow.com/questions/1368047/c-wpf-disable-text-wrap-of-richtextbox
+            //https://learn.microsoft.com/en-us/dotnet/api/system.windows.controls.richtextbox?view=windowsdesktop-8.0&redirectedfrom=MSDN
+            //TextWrapping = TextWrapping.NoWrap;
             VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
             HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
             DisplayBufferSize = 0;
 
+            AcceptsReturn = false;
             IsReadOnly = true;
             Width = Height = 100;
             MessageBuffer = "";
@@ -252,7 +258,7 @@ namespace CodeArtEng.Diagnostics.Controls
 
         private void Tracer_OnFlush()
         {
-            if (FlushEnabled) Clear();
+            if (FlushEnabled) Document.Blocks.Clear();
         }
 
         private void Tracer_OnMessageReceived(ref string message)
@@ -317,7 +323,7 @@ namespace CodeArtEng.Diagnostics.Controls
 
         private void MenuItemClear_Click(object sender, RoutedEventArgs e)
         {
-            Clear();
+            Document.Blocks.Clear();
         }
 
         private void MenuItemSaveToFile_Click(object sender, RoutedEventArgs e)
@@ -361,7 +367,7 @@ namespace CodeArtEng.Diagnostics.Controls
                 {
                     string[] data = new string[DisplayBufferSize];
                     Array.Copy(lines, lines.Length - DisplayBufferSize, data, 0, DisplayBufferSize);
-                    Text = string.Join(Environment.NewLine, data);
+                    //Text = string.Join(Environment.NewLine, data);
                 }
             }
         }
@@ -369,8 +375,12 @@ namespace CodeArtEng.Diagnostics.Controls
         protected override void OnTextChanged(TextChangedEventArgs e)
         {
             base.OnTextChanged(e);
-            base.ScrollToEnd();
+            ScrollToEnd();
+            FormatText();
         }
+
+        private string Text => new TextRange(Document.ContentStart, Document.ContentEnd).Text;
+        private string SelectedText => new TextRange(Selection.Start, Selection.End).Text;
 
         #region [ File Writer ]
 
@@ -432,6 +442,123 @@ namespace CodeArtEng.Diagnostics.Controls
             OutputFileWriter.ListenerEnabled = (ListenerEnabled && _WriteToFile);
         }
 
+        #endregion
+
+        #region [ Syntax Highlighting ]
+
+        private Dictionary<string, Color> SyntaxTable = new Dictionary<string, Color>();
+
+        /// <summary>
+        /// Add formatting rule to set font color based on matching string.
+        /// </summary>
+        /// <param name="containString"></param>
+        /// <param name="color"></param>
+        public void AddFormattingRule(string containString, Color color)
+        {
+            if (SyntaxTable.ContainsKey(containString)) return;
+            SyntaxTable.Add(containString, color);
+        }
+
+        /// <summary>
+        /// Clear all formatting rule
+        /// </summary>
+        public void ClearFormattingRule() { SyntaxTable.Clear(); }
+
+        /// <summary>
+        /// When enabled, reset format to default font color for next line if no matching found. 
+        /// Otherwise, apply last font color.
+        /// </summary>
+        [Category("Trace Listener")]
+        [DisplayName("Auto Reset Format")]
+        [Description("When enabled, reset format to default font color for next line if no matching found. Otherwise, apply last font color. Use AddFormattingRule() to define font color rule.")]
+        [DefaultValue(true)]
+        public bool AutoResetFormat { get; set; } = true;
+        private Color LastFontColor;
+        private bool Updating = false;
+        private int LastSelection = 0;
+
+        private void FormatText()
+        {
+            if (Updating) return;
+            Updating = true;
+            try
+            {
+                // Remove extra spacing between paragraphs
+                foreach (Block block in Document.Blocks)
+                {
+                    if (block is Paragraph paragraph)
+                    {
+                        paragraph.Margin = new Thickness(0);
+                    }
+                }
+
+                // Get the document's text content
+                TextRange documentRange = new TextRange(
+                    Document.ContentStart,
+                    Document.ContentEnd
+                );
+                string documentText = documentRange.Text;
+
+                // Split text into lines
+                string[] lines = documentText.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+
+                // Iterate through lines and apply formatting
+                TextPointer currentPosition = Document.ContentStart;
+                for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
+                {
+                    string currentLine = lines[lineIndex];
+
+                    // Find the start and end of the current line
+                    TextPointer lineStart = currentPosition;
+                    TextPointer lineEnd = GetLineEnd(lineStart);
+
+                    // Create a text range for the current line
+                    TextRange lineRange = new TextRange(lineStart, lineEnd);
+
+                    // Apply default color
+                    Color defaultColor = Colors.Black; // Equivalent to ForeColor
+                    ApplyColorToRange(lineRange, AutoResetFormat ? defaultColor : LastFontColor);
+
+                    // Check for syntax highlighting
+                    foreach (var entry in SyntaxTable)
+                    {
+                        if (currentLine.Contains(entry.Key))
+                        {
+                            ApplyColorToRange(lineRange, entry.Value);
+                            LastFontColor = entry.Value;
+                            break;
+                        }
+                    }
+
+                    // Move to next line
+                    currentPosition = lineEnd.GetNextInsertionPosition(LogicalDirection.Forward);
+                    if (currentPosition == null) break;
+                }
+
+                // Scroll to end (equivalent to ScrollToCaret())
+                ScrollToEnd();
+
+                // Update last selection (using document length)
+                LastSelection = documentText.Length;
+            }
+            finally
+            {
+                Updating = false;
+            }
+        }
+
+        // Helper method to get the end of a line
+        private TextPointer GetLineEnd(TextPointer lineStart)
+        {
+            return null;
+            //return lineStart.GetLineEndPosition(0);
+        }
+
+        // Helper method to apply color to a text range
+        private void ApplyColorToRange(TextRange range, Color color)
+        {
+            range.ApplyPropertyValue(TextElement.ForegroundProperty, new SolidColorBrush(color));
+        }
         #endregion
     }
 }
