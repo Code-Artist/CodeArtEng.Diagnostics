@@ -12,7 +12,7 @@ namespace CodeArtEng.Diagnostics.Controls
     public class DiagnosticsTextBox : TextBox
     {
         private static readonly object LockObject = new object();
-        string MessageBuffer;
+        private string MessageBuffer;
 
         private ContextMenuStrip contextMenu;
         private IContainer components;
@@ -60,7 +60,7 @@ namespace CodeArtEng.Diagnostics.Controls
 
             //Setup listener
             Tracer = new TraceLogger(Tracer_OnWriteMessage, Tracer_OnFlush, Tracer_OnMessageReceived);
-            ConfigureFileWritter();
+            ConfigureFileWriter();
         }
         private static bool IsInDesignMode(IComponent component)
         {
@@ -137,7 +137,8 @@ namespace CodeArtEng.Diagnostics.Controls
         [Description("Get or set Diagnostic TextBox Theme.")]
         public TextBoxTheme Theme
         {
-            get => ThemeValue; set
+            get => ThemeValue;
+            set
             {
                 UpdatingTheme = true;
                 try { ThemeValue = this.SetTheme(value); }
@@ -161,7 +162,7 @@ namespace CodeArtEng.Diagnostics.Controls
             set
             {
                 Tracer.Enabled = value;
-                ConfigureFileWritter();
+                ConfigureFileWriter();
             }
         }
 
@@ -448,7 +449,7 @@ namespace CodeArtEng.Diagnostics.Controls
             set
             {
                 _WriteToFile = value;
-                ConfigureFileWritter();
+                ConfigureFileWriter();
             }
         }
 
@@ -458,7 +459,7 @@ namespace CodeArtEng.Diagnostics.Controls
         [Browsable(false)]
         public new string Text { get { return base.Text; } private set { base.Text = value; } }
 
-        private void ConfigureFileWritter()
+        private void ConfigureFileWriter()
         {
             OutputFileWriter.ListenerEnabled = (ListenerEnabled && _WriteToFile);
         }

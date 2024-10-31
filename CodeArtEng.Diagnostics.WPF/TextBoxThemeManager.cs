@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
-using System.Drawing;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media;
+
 
 namespace CodeArtEng.Diagnostics
 {
@@ -51,42 +53,43 @@ namespace CodeArtEng.Diagnostics
         {
             switch (theme)
             {
-                //case TextBoxTheme.MSDos:
-                //    sender.ForeColor = Color.White;
-                //    sender.BackColor = Color.Black;
-                //    sender.Font = new Font("Consolas", sender.Font.SizeInPoints, FontStyle.Regular);
-                //    break;
+                case TextBoxTheme.MSDos:
+                    sender.Foreground = new SolidColorBrush(Colors.White);
+                    sender.Background = new SolidColorBrush(Colors.Black);
+                    sender.FontFamily = new FontFamily("Consolas");
+                    break;
 
-                //case TextBoxTheme.NightVision:
-                //    sender.ForeColor = Color.FromArgb(22, 198, 12);
-                //    sender.BackColor = Color.FromArgb(0, 28, 0);
-                //    sender.Font = new Font("Consolas", sender.Font.SizeInPoints, FontStyle.Regular);
-                //    break;
+                case TextBoxTheme.NightVision:
+                    sender.Foreground = new SolidColorBrush(Color.FromRgb(22, 198, 22));
+                    sender.Background = new SolidColorBrush(Color.FromRgb(0, 28, 0));
+                    sender.FontFamily = new FontFamily("Consolas");
+                    break;
 
-                //case TextBoxTheme.PowerShell:
-                //    sender.ForeColor = Color.White;
-                //    sender.BackColor = Color.FromArgb(1,36,86);
-                //    sender.Font = new Font("Consolas", sender.Font.SizeInPoints, FontStyle.Regular);
-                //    break;
+                case TextBoxTheme.PowerShell:
+                    sender.Foreground = new SolidColorBrush(Colors.White);
+                    sender.Background = new SolidColorBrush(Color.FromRgb(1, 36, 86));
+                    sender.FontFamily = new FontFamily("Consolas");
+                    break;
 
-                //case TextBoxTheme.VisualStudio_Blue:
-                //    sender.ForeColor = Color.FromArgb(86, 156, 214);
-                //    sender.BackColor = Color.FromArgb(30, 30, 30);
-                //    sender.Font = new Font("Consolas", sender.Font.SizeInPoints, FontStyle.Regular);
-                //    break;
+                case TextBoxTheme.VisualStudio_Blue:
+                    sender.Foreground = new SolidColorBrush(Color.FromRgb(86, 156, 214));
+                    sender.Background = new SolidColorBrush(Color.FromRgb(30, 30, 30));
+                    sender.FontFamily = new FontFamily("Consolas");
+                    break;
 
-                //case TextBoxTheme.VisualStudio_Green:
-                //    sender.ForeColor = Color.FromArgb(134, 198, 145);
-                //    sender.BackColor = Color.FromArgb(30, 30, 30);
-                //    sender.Font = new Font("Consolas", sender.Font.SizeInPoints, FontStyle.Regular);
-                //    break;
+                case TextBoxTheme.VisualStudio_Green:
+                    sender.Foreground = new SolidColorBrush(Color.FromRgb(134, 198, 145));
+                    sender.Background = new SolidColorBrush(Color.FromRgb(30, 30, 30));
+                    sender.FontFamily = new FontFamily("Consolas");
+                    break;
 
-                //case TextBoxTheme.Windows:
-                //default:
-                //    sender.ForeColor = Color.FromKnownColor(KnownColor.WindowText);
-                //    sender.BackColor = Color.FromKnownColor(KnownColor.Window);
-                //    sender.Font = new Font("Microsoft Sans Serif", sender.Font.SizeInPoints, FontStyle.Regular);
-                //    return TextBoxTheme.Windows;
+                case TextBoxTheme.Windows:
+                default:
+                    sender.Foreground = SystemColors.WindowTextBrush;
+                    sender.Background = SystemColors.WindowBrush;
+                    sender.FontFamily = new FontFamily("Microsoft Sans Serif");
+                    return TextBoxTheme.Windows;
+
 
             }
             return theme;

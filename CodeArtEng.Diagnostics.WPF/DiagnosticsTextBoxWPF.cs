@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Threading;
-using System.Windows.Input;
 using Microsoft.Win32;
 
 namespace CodeArtEng.Diagnostics.Controls
@@ -12,7 +10,7 @@ namespace CodeArtEng.Diagnostics.Controls
     /// <summary>
     /// TextBox with TraceListener for WPF
     /// </summary>
-    public class DiagnosticsTextBox : TextBox
+    public class DiagnosticsTextBox : TextBox, INotifyPropertyChanged
     {
         private static readonly object LockObject = new object();
         private string MessageBuffer;
@@ -44,12 +42,12 @@ namespace CodeArtEng.Diagnostics.Controls
             InitializeComponent();
 
             // Default control property
-            IsReadOnly = true;
-            AcceptsReturn = true;
             TextWrapping = TextWrapping.NoWrap;
-            VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+            VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
             HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
             DisplayBufferSize = 0;
+
+            IsReadOnly = true;
             Width = Height = 100;
             MessageBuffer = "";
 
@@ -65,6 +63,21 @@ namespace CodeArtEng.Diagnostics.Controls
             return DesignerProperties.GetIsInDesignMode(element);
         }
 
+        #region [ Hide Base Class Property ]
+
+        [Browsable(false)]
+        public new bool AcceptsReturn { get; set; }
+
+        [Browsable(false)]
+        public new bool AcceptsTab { get; set; }
+
+        [Browsable(false)]
+        public new bool ReadOnly { get; set; }
+
+        [Browsable(false)]
+        public new bool Multiline { get; set; } = true;
+        #endregion
+
         #region [ Theme ]
 
         protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
@@ -78,6 +91,7 @@ namespace CodeArtEng.Diagnostics.Controls
                 e.Property == FontSizeProperty ||
                 e.Property == FontWeightProperty)
             {
+                if (!IsLoaded) return; // Skip these properties until control is fully loaded.
                 ThemeValue = TextBoxTheme.UserDefined;
             }
         }
@@ -88,22 +102,39 @@ namespace CodeArtEng.Diagnostics.Controls
         /// <summary>
         /// Get or set Diagnostic TextBox Theme. <see cref="TextBoxTheme"/>
         /// </summary>
+        [Category("Appearance")]
+        [DefaultValue(typeof(TextBoxTheme), "Windows")]
+        [Description("Get or set Diagnostic TextBox Theme.")]
         public TextBoxTheme Theme
         {
             get => ThemeValue;
             set
             {
                 UpdatingTheme = true;
-                try { ThemeValue = this.SetTheme(value); }
+                try
+                {
+                    ThemeValue = this.SetTheme(value);
+                    OnPropertyChanged(nameof(Theme));
+                }
                 finally { UpdatingTheme = false; }
             }
         }
 
         #endregion
 
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         /// <summary>
         /// Enable / Disable trace listener to capture message from trace source.
         /// </summary>
+        [Category("Trace Listener")]
+        [DisplayName("ListenerEnabled")]
+        [Description("Enable / Disable trace listener to capture message from trace source.")]
+        [DefaultValue(true)]
         public bool ListenerEnabled
         {
             get { return Tracer.Enabled; }
@@ -111,17 +142,35 @@ namespace CodeArtEng.Diagnostics.Controls
             {
                 Tracer.Enabled = value;
                 ConfigureFileWritter();
+                OnPropertyChanged(nameof(ListenerEnabled));
             }
         }
 
         /// <summary>
         /// Gets or sets a value indicating whether control should response to Flush() command from trace source.
         /// </summary>
-        public bool FlushEnabled { get; set; }
+        [Category("Trace Listener")]
+        [DisplayName("AutoFlushEnabled")]
+        [Description("Indicate whether control should response to Flush() command from trace source.")]
+        [DefaultValue(true)]
+        public bool FlushEnabled
+        {
+            get => _FlushEnabled;
+            set
+            {
+                _FlushEnabled = value;
+                OnPropertyChanged(nameof(FlushEnabled));
+            }
+        }
+        private bool _FlushEnabled;
 
         /// <summary>
         /// Enable / Disable printing time stamp in front of each message.
         /// </summary>
+        [Category("Trace Listener")]
+        [DisplayName("ShowTimeStamp")]
+        [Description("Append time stamp in front of each log message.")]
+        [DefaultValue(false)]
         public bool ShowTimeStamp
         {
             get { return Tracer.ShowTimeStamp; }
@@ -129,12 +178,16 @@ namespace CodeArtEng.Diagnostics.Controls
             {
                 Tracer.ShowTimeStamp = value;
                 OutputFileWriter.ShowTimeStamp = value;
+                OnPropertyChanged(nameof(ShowTimeStamp));
             }
         }
 
         /// <summary>
         /// Define time stamp string format when <see cref="TimeStampStyle"/> set as <see cref="TraceTimeStampStyle.DateTimeString"/> 
         /// </summary>
+        [Category("Trace Listener")]
+        [DisplayName("TimeStampFormat")]
+        [Description("Define time stamp string format when TimeStampStyle set as DateTimeString")]
         public string TimeStampFormat
         {
             get { return Tracer.TimeStampFormat; }
@@ -142,12 +195,17 @@ namespace CodeArtEng.Diagnostics.Controls
             {
                 Tracer.TimeStampFormat = value;
                 OutputFileWriter.TimeStampFormat = value;
+                OnPropertyChanged(TimeStampFormat);
             }
         }
 
         /// <summary>
         /// Define time stamp style.
         /// </summary>
+        [Category("Trace Listener")]
+        [DisplayName("TimeStampStyle")]
+        [Description("Define time stamp style")]
+        [DefaultValue(TraceTimeStampStyle.DateTimeString)]
         public TraceTimeStampStyle TimeStampStyle
         {
             get { return Tracer.TimeStampStyle; }
@@ -161,15 +219,27 @@ namespace CodeArtEng.Diagnostics.Controls
         /// <summary>
         /// Define number of lines to be keep in text box. Set to 0 to keep all lines.
         /// </summary>
+        [Category("Trace Listener")]
+        [DisplayName("DisplayBufferSize")]
+        [Description("Define how many lines of logs to keep in text box. Set to 0 to keep all lines.")]
+        [DefaultValue(0)]
         public int DisplayBufferSize { get; set; }
 
         /// <summary>
         /// Define how often the control shall be updated. Value in ms.
         /// </summary>
+        [Category("Trace Listener")]
+        [DisplayName("Refresh Interval (ms).")]
+        [Description("Define how often the control shall be updated")]
+        [DefaultValue(10)]
         public int RefreshInterval
         {
             get => refreshTimer.Interval.Milliseconds;
-            set => refreshTimer.Interval = TimeSpan.FromMilliseconds(value);
+            set
+            {
+                refreshTimer.Interval = TimeSpan.FromMilliseconds(value);
+                OnPropertyChanged(nameof(RefreshInterval));
+            }
         }
 
         private void Tracer_OnWriteMessage(string message)
@@ -241,11 +311,6 @@ namespace CodeArtEng.Diagnostics.Controls
             ListenerEnabled = !IsInDesignMode(this);
         }
 
-        private void ContextMenu_Opened(object sender, RoutedEventArgs e)
-        {
-            menuItemEnabled.IsChecked = ListenerEnabled;
-        }
-
         private void MenuItemEnabled_Click(object sender, RoutedEventArgs e)
         {
             ListenerEnabled = !ListenerEnabled;
@@ -276,6 +341,11 @@ namespace CodeArtEng.Diagnostics.Controls
                 Clipboard.SetText(SelectedText);
         }
 
+        private void ContextMenu_Opened(object sender, RoutedEventArgs e)
+        {
+            menuItemEnabled.IsChecked = ListenerEnabled;
+        }
+
         private void RefreshTimer_Tick(object sender, EventArgs e)
         {
             lock (LockObject)
@@ -296,35 +366,54 @@ namespace CodeArtEng.Diagnostics.Controls
                         Array.Copy(lines, lines.Length - DisplayBufferSize, data, 0, DisplayBufferSize);
                         Text = string.Join(Environment.NewLine, data);
                     }
-
-                    CaretIndex = Text.Length;
-                    ScrollToEnd();
                 });
             }
         }
 
+        #region [ File Writer ]
+
         /// <summary>
         /// Output trace to file. Set to a valid path to enable this option.
         /// </summary>
+        [Category("Trace Listener")]
+        [DisplayName("OutputFile")]
+        [Description("Configure output file for traces. Set WriteToFile property to true to enable trace output to file.")]
+        [DefaultValue("")]
         public string OutputFile
         {
             get { return OutputFileWriter.OutputFile; }
-            set { OutputFileWriter.OutputFile = value; }
+            set
+            {
+                OutputFileWriter.OutputFile = value;
+                OnPropertyChanged(nameof(OutputFile));
+            }
         }
 
         /// <summary>
         /// Configure secondary output path for trace output as backup when failed to write to OutputFile.
         /// </summary>
+        [Category("Trace Listener")]
+        [DisplayName("OutputFileBackup")]
+        [Description("Configure secondary output path for trace output as backup when failed to write to OutputFile. Recommend to use local path which is guaranteed to be available.")]
+        [DefaultValue("")]
         public string OutputFileBackup
         {
             get { return OutputFileWriter.BackupOutputFile; }
-            set { OutputFileWriter.BackupOutputFile = value; }
+            set
+            {
+                OutputFileWriter.BackupOutputFile = value;
+                OnPropertyChanged(nameof(OutputFileBackup));
+            }
         }
 
         private bool _WriteToFile = false;
         /// <summary>
         /// Set this flag to true to enable writing log to OutputFile.
         /// </summary>
+        [Category("Trace Listener")]
+        [DisplayName("WriteToFile")]
+        [Description("Enable / Disable trace output to file.")]
+        [DefaultValue(false)]
         public bool WriteToFile
         {
             get { return _WriteToFile; }
@@ -332,12 +421,21 @@ namespace CodeArtEng.Diagnostics.Controls
             {
                 _WriteToFile = value;
                 ConfigureFileWritter();
+                OnPropertyChanged(nameof(WriteToFile));
             }
+        }
+
+        protected override void OnTextChanged(TextChangedEventArgs e)
+        {
+            base.OnTextChanged(e);
+            base.ScrollToEnd();
         }
 
         private void ConfigureFileWritter()
         {
             OutputFileWriter.ListenerEnabled = (ListenerEnabled && _WriteToFile);
         }
+
+        #endregion
     }
 }
