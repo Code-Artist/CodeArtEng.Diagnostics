@@ -15,15 +15,15 @@ namespace CodeArtEng.Diagnostics.Controls
         private static readonly object LockObject = new object();
         private string MessageBuffer;
 
-        private ContextMenuStrip contextMenuStrip1;
+        private ContextMenuStrip contextMenu;
         private IContainer components;
-        private ToolStripMenuItem toolStripEnabled;
-        private ToolStripMenuItem toolStripClear;
+        private ToolStripMenuItem menuItemEnabled;
+        private ToolStripMenuItem menuItemClear;
+        private ToolStripMenuItem menuItemSaveToFile;
+        private ToolStripMenuItem menuItemCopyAll;
+        private ToolStripMenuItem menuItemCopySelected;
         private Timer refreshTimer;
-        private ToolStripMenuItem toolStripSaveToFile;
         private TraceLogger Tracer;
-        private ToolStripMenuItem toolStripCopyAll;
-        private ToolStripMenuItem toolStripCopySelected;
         private TraceFileWriter OutputFileWriter;
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace CodeArtEng.Diagnostics.Controls
 
             //Setup listener
             Tracer = new TraceLogger(Tracer_OnWriteMessage, Tracer_OnFlush, Tracer_OnMessageReceived);
-            ConfigureFileWritter();
+            ConfigureFileWriter();
         }
         private static bool IsInDesignMode(IComponent component)
         {
@@ -83,6 +83,8 @@ namespace CodeArtEng.Diagnostics.Controls
         }
 
         #region [ Hide Base Class Property ]
+        [Browsable(false)]
+        private new bool AcceptsReturn { get; set; }
 
         [Browsable(false)]
         private new bool AcceptsTab { get; set; }
@@ -136,7 +138,8 @@ namespace CodeArtEng.Diagnostics.Controls
         [Description("Get or set Diagnostic TextBox Theme.")]
         public TextBoxTheme Theme
         {
-            get => ThemeValue; set
+            get => ThemeValue;
+            set
             {
                 UpdatingTheme = true;
                 try { ThemeValue = this.SetTheme(value); }
@@ -160,7 +163,7 @@ namespace CodeArtEng.Diagnostics.Controls
             set
             {
                 Tracer.Enabled = value;
-                ConfigureFileWritter();
+                ConfigureFileWriter();
             }
         }
 
@@ -272,73 +275,61 @@ namespace CodeArtEng.Diagnostics.Controls
         [DisplayName("MessageReceived")]
         public event EventHandler<TextEventArgs> MessageReceived;
 
-        private delegate void WriteDelegate(string message);
-        private void HandleWriteEvent(string message)
-        {
-            if (InvokeRequired)
-            {
-                WriteDelegate delFunction = new WriteDelegate(HandleWriteEvent);
-                Invoke(delFunction, new object[] { message });
-                return;
-            }
-            this.AppendText(message);
-        }
-
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.toolStripEnabled = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripClear = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSaveToFile = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripCopySelected = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripCopyAll = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.menuItemEnabled = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuItemClear = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuItemSaveToFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuItemCopySelected = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuItemCopyAll = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshTimer = new System.Windows.Forms.Timer(this.components);
-            this.contextMenuStrip1.SuspendLayout();
+            this.contextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // contextMenuStrip1
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripEnabled,
-            this.toolStripClear,
-            this.toolStripSaveToFile,
-            this.toolStripCopySelected,
-            this.toolStripCopyAll});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(174, 114);
-            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
-            this.contextMenuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.contextMenuStrip1_ItemClicked);
+            this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuItemEnabled,
+            this.menuItemClear,
+            this.menuItemSaveToFile,
+            this.menuItemCopySelected,
+            this.menuItemCopyAll});
+            this.contextMenu.Name = "contextMenuStrip1";
+            this.contextMenu.Size = new System.Drawing.Size(174, 114);
+            this.contextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
+            this.contextMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.contextMenuStrip1_ItemClicked);
             // 
             // toolStripEnabled
             // 
-            this.toolStripEnabled.Name = "toolStripEnabled";
-            this.toolStripEnabled.Size = new System.Drawing.Size(173, 22);
-            this.toolStripEnabled.Text = "Enabled";
+            this.menuItemEnabled.Name = "toolStripEnabled";
+            this.menuItemEnabled.Size = new System.Drawing.Size(173, 22);
+            this.menuItemEnabled.Text = "Enabled";
             // 
             // toolStripClear
             // 
-            this.toolStripClear.Name = "toolStripClear";
-            this.toolStripClear.Size = new System.Drawing.Size(173, 22);
-            this.toolStripClear.Text = "Clear";
+            this.menuItemClear.Name = "toolStripClear";
+            this.menuItemClear.Size = new System.Drawing.Size(173, 22);
+            this.menuItemClear.Text = "Clear";
             // 
             // toolStripSaveToFile
             // 
-            this.toolStripSaveToFile.Name = "toolStripSaveToFile";
-            this.toolStripSaveToFile.Size = new System.Drawing.Size(173, 22);
-            this.toolStripSaveToFile.Text = "Save to File...";
+            this.menuItemSaveToFile.Name = "toolStripSaveToFile";
+            this.menuItemSaveToFile.Size = new System.Drawing.Size(173, 22);
+            this.menuItemSaveToFile.Text = "Save to File...";
             // 
             // toolStripCopySelected
             // 
-            this.toolStripCopySelected.Name = "toolStripCopySelected";
-            this.toolStripCopySelected.Size = new System.Drawing.Size(173, 22);
-            this.toolStripCopySelected.Text = "Copy Selected Text";
+            this.menuItemCopySelected.Name = "toolStripCopySelected";
+            this.menuItemCopySelected.Size = new System.Drawing.Size(173, 22);
+            this.menuItemCopySelected.Text = "Copy Selected Text";
             // 
             // toolStripCopyAll
             // 
-            this.toolStripCopyAll.Name = "toolStripCopyAll";
-            this.toolStripCopyAll.Size = new System.Drawing.Size(173, 22);
-            this.toolStripCopyAll.Text = "Copy All";
+            this.menuItemCopyAll.Name = "toolStripCopyAll";
+            this.menuItemCopyAll.Size = new System.Drawing.Size(173, 22);
+            this.menuItemCopyAll.Text = "Copy All";
             // 
             // refreshTimer
             // 
@@ -348,11 +339,11 @@ namespace CodeArtEng.Diagnostics.Controls
             // 
             // DiagnosticsRichTextBox
             // 
-            this.ContextMenuStrip = this.contextMenuStrip1;
+            this.ContextMenuStrip = this.contextMenu;
             this.WordWrap = false;
             this.TextChanged += new System.EventHandler(this.DiagnosticsRichTextBox_TextChanged);
             this.VisibleChanged += new System.EventHandler(this.DiagnosticsTextBox_VisibleChanged);
-            this.contextMenuStrip1.ResumeLayout(false);
+            this.contextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -363,17 +354,17 @@ namespace CodeArtEng.Diagnostics.Controls
 
         private void contextMenuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            if (e.ClickedItem == toolStripEnabled)
+            if (e.ClickedItem == menuItemEnabled)
             {
                 ListenerEnabled = !ListenerEnabled;
             }
-            else if (e.ClickedItem == toolStripClear)
+            else if (e.ClickedItem == menuItemClear)
             {
                 this.Clear();
             }
-            else if (e.ClickedItem == toolStripSaveToFile)
+            else if (e.ClickedItem == menuItemSaveToFile)
             {
-                contextMenuStrip1.Hide(); //Hide context menu.
+                contextMenu.Hide(); //Hide context menu.
                 using (SaveFileDialog dlg = new SaveFileDialog())
                 {
                     if (dlg.ShowDialog() == DialogResult.OK)
@@ -382,18 +373,18 @@ namespace CodeArtEng.Diagnostics.Controls
                     }
                 }
             }
-            else if (e.ClickedItem == toolStripCopyAll)
+            else if (e.ClickedItem == menuItemCopyAll)
             {
                 Clipboard.SetText(Text);
             }
-            else if (e.ClickedItem == toolStripCopySelected)
+            else if (e.ClickedItem == menuItemCopySelected)
             {
                 Clipboard.SetText(SelectedText);
             }
         }
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
         {
-            toolStripEnabled.Checked = ListenerEnabled;
+            menuItemEnabled.Checked = ListenerEnabled;
         }
 
         private void refreshTimer_Tick(object sender, EventArgs e)
@@ -460,7 +451,7 @@ namespace CodeArtEng.Diagnostics.Controls
             set
             {
                 _WriteToFile = value;
-                ConfigureFileWritter();
+                ConfigureFileWriter();
             }
         }
 
@@ -470,7 +461,7 @@ namespace CodeArtEng.Diagnostics.Controls
         [Browsable(false)]
         public new string Text { get { return base.Text; } private set { base.Text = value; } }
 
-        private void ConfigureFileWritter()
+        private void ConfigureFileWriter()
         {
             OutputFileWriter.ListenerEnabled = (ListenerEnabled && _WriteToFile);
         }
