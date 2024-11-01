@@ -64,12 +64,21 @@ namespace CodeArtEng.Diagnostics.Controls
 
         #region [ Hide Base Class Property ]
 
+        /// <summary>
+        /// Hidden property, no effect
+        /// </summary>
         [Browsable(false)]
         public new bool AcceptsReturn { get; set; }
 
+        /// <summary>
+        /// Hidden property, no effect
+        /// </summary>
         [Browsable(false)]
         public new bool AcceptsTab { get; set; }
 
+        /// <summary>
+        /// Hidden property, no effect
+        /// </summary>
         [Browsable(false)]
         public new bool IsReadOnly { get; set; }
 
@@ -77,6 +86,10 @@ namespace CodeArtEng.Diagnostics.Controls
 
         #region [ Theme ]
 
+        /// <summary>
+        /// Handle property changed.
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
@@ -119,6 +132,9 @@ namespace CodeArtEng.Diagnostics.Controls
 
         #endregion
 
+        /// <summary>
+        /// Property changed event handler
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)
         {
@@ -364,6 +380,10 @@ namespace CodeArtEng.Diagnostics.Controls
             }
         }
 
+        /// <summary>
+        /// Called when text changed
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnTextChanged(TextChangedEventArgs e)
         {
             base.OnTextChanged(e);

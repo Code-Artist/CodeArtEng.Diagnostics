@@ -21,6 +21,7 @@
     <EnableNETAnalyzers>False</EnableNETAnalyzers>
     <AnalysisLevel>none</AnalysisLevel>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

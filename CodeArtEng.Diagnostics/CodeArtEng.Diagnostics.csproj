@@ -19,6 +19,7 @@
     <Description>Windows Form Diagnostics Tools</Description>
     <PackageTags>C#, WinForms</PackageTags>
     <PackageIcon>CAELogoSmall.png</PackageIcon>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
