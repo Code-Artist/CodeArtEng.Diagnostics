@@ -1,20 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <TargetFrameworks>net48;net6.0-Windows</TargetFrameworks>
+    <TargetFrameworks>net48;net6.0-Windows;net8.0-Windows</TargetFrameworks>
     <AssemblyName>CodeArtEng.Diagnostics</AssemblyName>
     <RootNamespace>CodeArtEng.Diagnostics</RootNamespace>
     <UseWindowsForms>True</UseWindowsForms>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Code Artist</Authors>
-    <Version>4.1.0</Version>
+    <Version>4.2.0</Version>
     <Company>Code Art Engineering</Company>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/Code-Artist/CodeArtEng.Diagnostics</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Code-Artist/CodeArtEng.Diagnostics</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
     <Copyright>Copyright © CodeArtEng 2024</Copyright>
-    <PackageReleaseNotes>Upgraded to .NET 4.8 and .NET Core 6.0</PackageReleaseNotes>
+    <PackageReleaseNotes>Internal refactoring</PackageReleaseNotes>
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <Description>Windows Form Diagnostics Tools</Description>
     <PackageTags>C#, WinForms</PackageTags>
