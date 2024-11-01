@@ -20,6 +20,7 @@
     <PackageTags>C#, WinForms</PackageTags>
     <PackageIcon>CAELogoSmall.png</PackageIcon>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <FileVersion>4.2.1</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
