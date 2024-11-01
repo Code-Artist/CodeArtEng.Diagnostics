@@ -31,9 +31,9 @@ namespace Diagnostics_Example_WPF
             for (int x = 0; x < 20; x++)
                 Trace.WriteLine("Line " + x.ToString());
 
-            diagnosticsRichTextBox1.AddFormattingRule("Thread", Colors.Blue);
-            diagnosticsRichTextBox1.AddFormattingRule("Line 10", Colors.Blue);
-            diagnosticsRichTextBox1.AddFormattingRule("Trace Message 9", Colors.Red);
+            //diagnosticsRichTextBox1.AddFormattingRule("Thread", Colors.Blue);
+            //diagnosticsRichTextBox1.AddFormattingRule("Line 10", Colors.Blue);
+            //diagnosticsRichTextBox1.AddFormattingRule("Trace Message 9", Colors.Red);
 
             Trace.WriteLine("Multiline String:\r\nLine 1\rLine2\nLine3");
         }

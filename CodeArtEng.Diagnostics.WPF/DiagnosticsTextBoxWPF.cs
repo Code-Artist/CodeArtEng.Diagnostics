@@ -89,7 +89,7 @@ namespace CodeArtEng.Diagnostics.Controls
                 e.Property == FontWeightProperty)
             {
                 if (!IsLoaded) return; // Skip these properties until control is fully loaded.
-                ThemeValue = TextBoxTheme.UserDefined;
+                if (!UpdatingTheme) ThemeValue = TextBoxTheme.UserDefined;
             }
         }
 

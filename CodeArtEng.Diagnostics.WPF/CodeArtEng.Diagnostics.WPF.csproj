@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="DiagnosticsRichTextBoxWPF.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="..\CodeArtEng.Diagnostics\Classes\CodeProfiler.cs" Link="CodeProfiler.cs" />
     <Compile Include="..\CodeArtEng.Diagnostics\Classes\ProcessExecutor.cs" Link="ProcessExecutor.cs" />
     <Compile Include="..\CodeArtEng.Diagnostics\Classes\TraceFileWriter.cs" Link="TraceFileWriter.cs" />
