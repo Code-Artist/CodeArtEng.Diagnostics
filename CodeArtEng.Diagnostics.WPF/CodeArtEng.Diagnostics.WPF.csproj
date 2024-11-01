@@ -5,6 +5,22 @@
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>CodeArtEng.Diagnostics</RootNamespace>
+    <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+    <Version>4.2.0</Version>
+    <Authors>Code Artist</Authors>
+    <Company>Code Art Engineering</Company>
+    <Description>WPF Diagnostics Tools</Description>
+    <Copyright>Copyright © CodeArtEng 2024</Copyright>
+    <PackageProjectUrl>https://github.com/Code-Artist/CodeArtEng.Diagnostics</PackageProjectUrl>
+    <PackageIcon>CAELogoSmall.png</PackageIcon>
+    <RepositoryUrl>https://github.com/Code-Artist/CodeArtEng.Diagnostics</RepositoryUrl>
+    <RepositoryType>GitHub</RepositoryType>
+    <PackageTags>C#, WPF</PackageTags>
+    <PackageReleaseNotes>New Release for WPF</PackageReleaseNotes>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <EnableNETAnalyzers>False</EnableNETAnalyzers>
+    <AnalysisLevel>none</AnalysisLevel>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,6 +35,13 @@
     <Compile Include="..\CodeArtEng.Diagnostics\Classes\TraceTimeStampStyle.cs" Link="TraceTimeStampStyle.cs" />
     <Compile Include="..\CodeArtEng.Diagnostics\Classes\Utility.cs" Link="Utility.cs" />
     <Compile Include="..\CodeArtEng.Diagnostics\Controls\TextEventArgs.cs" Link="TextEventArgs.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\..\..\Projects\CodeArtEng\03 Art\Icons\CAELogoSmall.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
