@@ -71,10 +71,8 @@ namespace CodeArtEng.Diagnostics.Controls
         public new bool AcceptsTab { get; set; }
 
         [Browsable(false)]
-        public new bool ReadOnly { get; set; }
+        public new bool IsReadOnly { get; set; }
 
-        [Browsable(false)]
-        public new bool Multiline { get; set; } = true;
         #endregion
 
         #region [ Theme ]

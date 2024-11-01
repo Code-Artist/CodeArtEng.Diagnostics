@@ -83,8 +83,6 @@ namespace CodeArtEng.Diagnostics.Controls
         }
 
         #region [ Hide Base Class Property ]
-        [Browsable(false)]
-        private new bool AcceptsReturn { get; set; }
 
         [Browsable(false)]
         private new bool AcceptsTab { get; set; }

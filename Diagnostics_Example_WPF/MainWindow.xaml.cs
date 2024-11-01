@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using System.Security.RightsManagement;
 
 namespace Diagnostics_Example_WPF
 {
@@ -12,6 +13,7 @@ namespace Diagnostics_Example_WPF
     /// </summary>
     public partial class MainWindow : Window
     {
+
         public MainWindow()
         {
             InitializeComponent();
@@ -29,6 +31,9 @@ namespace Diagnostics_Example_WPF
             for (int x = 0; x < 20; x++)
                 Trace.WriteLine("Line " + x.ToString());
 
+            diagnosticsRichTextBox1.AddFormattingRule("Thread", Colors.Blue);
+            diagnosticsRichTextBox1.AddFormattingRule("Line 10", Colors.Blue);
+            diagnosticsRichTextBox1.AddFormattingRule("Trace Message 9", Colors.Red);
 
             Trace.WriteLine("Multiline String:\r\nLine 1\rLine2\nLine3");
         }
@@ -73,6 +78,7 @@ namespace Diagnostics_Example_WPF
                 await workTask;
 
                 CodeProfiler.Stop("Thread Write");
+
             }
             catch (Exception ex)
             {

@@ -77,10 +77,8 @@ namespace CodeArtEng.Diagnostics.Controls
         public new bool AcceptsTab { get; set; }
 
         [Browsable(false)]
-        public new bool ReadOnly { get; set; }
+        public new bool IsReadOnly { get; set; }
 
-        [Browsable(false)]
-        public new bool Multiline { get; set; } = true;
         #endregion
 
         #region [ Theme ]
@@ -360,7 +358,11 @@ namespace CodeArtEng.Diagnostics.Controls
                 AppendText(MessageBuffer);
                 MessageBuffer = "";
 
-                if (DisplayBufferSize <= 0) return;
+                if (DisplayBufferSize <= 0)
+                {
+                    FormatText();
+                    return;
+                }
 
                 var lines = Text.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
                 if (lines.Length > DisplayBufferSize)
@@ -369,6 +371,7 @@ namespace CodeArtEng.Diagnostics.Controls
                     Array.Copy(lines, lines.Length - DisplayBufferSize, data, 0, DisplayBufferSize);
                     //Text = string.Join(Environment.NewLine, data);
                 }
+                FormatText();
             }
         }
 
@@ -376,7 +379,6 @@ namespace CodeArtEng.Diagnostics.Controls
         {
             base.OnTextChanged(e);
             ScrollToEnd();
-            FormatText();
         }
 
         private string Text => new TextRange(Document.ContentStart, Document.ContentEnd).Text;
@@ -483,63 +485,18 @@ namespace CodeArtEng.Diagnostics.Controls
             Updating = true;
             try
             {
-                // Remove extra spacing between paragraphs
                 foreach (Block block in Document.Blocks)
                 {
                     if (block is Paragraph paragraph)
                     {
+                        // Remove extra spacing between paragraphs
+                        // Ref: https://stackoverflow.com/questions/325075/how-do-i-change-richtextbox-paragraph-spacing
                         paragraph.Margin = new Thickness(0);
+
+                        //Format Text based on Syntax Highlighting
+                        ProcessParagraph(paragraph);
                     }
                 }
-
-                // Get the document's text content
-                TextRange documentRange = new TextRange(
-                    Document.ContentStart,
-                    Document.ContentEnd
-                );
-                string documentText = documentRange.Text;
-
-                // Split text into lines
-                string[] lines = documentText.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-
-                // Iterate through lines and apply formatting
-                TextPointer currentPosition = Document.ContentStart;
-                for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
-                {
-                    string currentLine = lines[lineIndex];
-
-                    // Find the start and end of the current line
-                    TextPointer lineStart = currentPosition;
-                    TextPointer lineEnd = GetLineEnd(lineStart);
-
-                    // Create a text range for the current line
-                    TextRange lineRange = new TextRange(lineStart, lineEnd);
-
-                    // Apply default color
-                    Color defaultColor = Colors.Black; // Equivalent to ForeColor
-                    ApplyColorToRange(lineRange, AutoResetFormat ? defaultColor : LastFontColor);
-
-                    // Check for syntax highlighting
-                    foreach (var entry in SyntaxTable)
-                    {
-                        if (currentLine.Contains(entry.Key))
-                        {
-                            ApplyColorToRange(lineRange, entry.Value);
-                            LastFontColor = entry.Value;
-                            break;
-                        }
-                    }
-
-                    // Move to next line
-                    currentPosition = lineEnd.GetNextInsertionPosition(LogicalDirection.Forward);
-                    if (currentPosition == null) break;
-                }
-
-                // Scroll to end (equivalent to ScrollToCaret())
-                ScrollToEnd();
-
-                // Update last selection (using document length)
-                LastSelection = documentText.Length;
             }
             finally
             {
@@ -547,18 +504,34 @@ namespace CodeArtEng.Diagnostics.Controls
             }
         }
 
-        // Helper method to get the end of a line
-        private TextPointer GetLineEnd(TextPointer lineStart)
+        private void ProcessParagraph(Paragraph paragraph)
         {
-            return null;
-            //return lineStart.GetLineEndPosition(0);
+            // Get the text content of the paragraph
+            string paragraphText = new TextRange(paragraph.ContentStart, paragraph.ContentEnd).Text;
+
+            // Set default color if AutoResetFormat is enabled
+            if (AutoResetFormat)
+            {
+                paragraph.Foreground = new SolidColorBrush(Colors.Black);
+                LastFontColor = Colors.Black;
+            }
+            else
+            {
+                paragraph.Foreground = new SolidColorBrush(LastFontColor);
+            }
+            
+            // Check for syntax matches
+            foreach (var entry in SyntaxTable)
+            {
+                if (paragraphText.Contains(entry.Key))
+                {
+                    paragraph.Foreground = new SolidColorBrush(entry.Value);
+                    LastFontColor = entry.Value;
+                    break; // Break on first match as per requirement
+                }
+            }
         }
 
-        // Helper method to apply color to a text range
-        private void ApplyColorToRange(TextRange range, Color color)
-        {
-            range.ApplyPropertyValue(TextElement.ForegroundProperty, new SolidColorBrush(color));
-        }
         #endregion
     }
 }
