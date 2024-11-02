@@ -7,7 +7,7 @@
     <UseWindowsForms>True</UseWindowsForms>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Code Artist</Authors>
-    <Version>4.2.0</Version>
+    <Version>4.2.1</Version>
     <Company>Code Art Engineering</Company>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/Code-Artist/CodeArtEng.Diagnostics</PackageProjectUrl>
@@ -20,7 +20,7 @@
     <PackageTags>C#, WinForms</PackageTags>
     <PackageIcon>CAELogoSmall.png</PackageIcon>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <FileVersion>4.2.1</FileVersion>
+    <FileVersion></FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
