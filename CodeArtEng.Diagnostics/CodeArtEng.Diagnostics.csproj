@@ -24,7 +24,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Management" Version="5.0.0" Condition="'$(TargetFramework)' != 'net45'" />
+    <PackageReference Include="System.Management" Version="9.0.4" Condition="'$(TargetFramework)' != 'net45'" />
   </ItemGroup>
 
   <ItemGroup>
