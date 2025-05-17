@@ -7,14 +7,14 @@
     <UseWindowsForms>True</UseWindowsForms>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Code Artist</Authors>
-    <Version>4.2.1</Version>
+    <Version>4.2.2</Version>
     <Company>Code Art Engineering</Company>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/Code-Artist/CodeArtEng.Diagnostics</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Code-Artist/CodeArtEng.Diagnostics</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
-    <Copyright>Copyright © CodeArtEng 2024</Copyright>
-    <PackageReleaseNotes>.NET 8.0 Support</PackageReleaseNotes>
+    <Copyright>Copyright © CodeArtEng 2025</Copyright>
+    <PackageReleaseNotes>NEW: TextSerializer</PackageReleaseNotes>
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <Description>Windows Form Diagnostics Tools</Description>
     <PackageTags>C#, WinForms</PackageTags>
